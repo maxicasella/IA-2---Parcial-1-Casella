@@ -26,5 +26,4 @@ public class PlayerDeath : IState
     {
         throw new System.NotImplementedException();
     }
-
 }

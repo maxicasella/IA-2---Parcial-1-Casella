@@ -7,7 +7,6 @@ public class PlayerAttack : IState
     FSM _fsm;
     CharacterController _character;
     Animator _myAnim;
-
     public PlayerAttack(FSM fsm, CharacterController character, Animator myAnim)
     {
         _fsm = fsm;

@@ -7,7 +7,6 @@ public class PlayerDamage : IState
     FSM _fsm;
     CharacterController _character;
     Animator _myAnim;
-
     public PlayerDamage(FSM fsm, CharacterController character, Animator myAnim)
     {
         _fsm = fsm;
@@ -26,5 +25,4 @@ public class PlayerDamage : IState
     {
         throw new System.NotImplementedException();
     }
-
 }

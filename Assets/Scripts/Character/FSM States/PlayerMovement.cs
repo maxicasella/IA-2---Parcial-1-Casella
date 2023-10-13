@@ -31,7 +31,6 @@ public class PlayerMovement : IState
         _character.move = false;
         _myAnim.SetBool("Run", false);
     }
-
     void Move(float verticalInput, float horizontalInput)
     {
         Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput);
