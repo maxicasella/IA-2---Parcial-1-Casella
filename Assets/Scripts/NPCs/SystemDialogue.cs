@@ -51,13 +51,13 @@ public class SystemDialogue : MonoBehaviour
         }
         string actualText = _dialoguesQueue.Dequeue();
         _txtScreen.text = actualText;
-        StartCoroutine(PrintText(actualText));
+        StartCoroutine(PrintText(actualText)); //IA 2 - Parcial 1
     }
     void ImageOff()
     {
         _myAnim.SetBool("Text", false);
     }
-    IEnumerator PrintText(string text)
+    IEnumerator PrintText(string text) //IA 2 - Parcial 1
     {
         _txtScreen.text = "";
         foreach (char chars in text.ToCharArray())
