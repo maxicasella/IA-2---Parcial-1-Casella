@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Normal Sword
   itemIcon: {fileID: -1624117421, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  isStackable: 0
   toolType: 0

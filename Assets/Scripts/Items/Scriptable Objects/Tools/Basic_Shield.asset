@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Basic Shield
   itemIcon: {fileID: 646594973, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  isStackable: 0
   toolType: 2

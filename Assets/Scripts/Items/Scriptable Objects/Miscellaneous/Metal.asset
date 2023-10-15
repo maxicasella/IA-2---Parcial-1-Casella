@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Metal
   m_EditorClassIdentifier: 
   itemName: Metal
-  itemIcon: {fileID: 609963671, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  itemIcon: {fileID: 21300000, guid: 29c3ade20886b8c44ba9845dc842d591, type: 3}
+  isStackable: 1
   valueAdded: 1
   miscellaneousType: 2

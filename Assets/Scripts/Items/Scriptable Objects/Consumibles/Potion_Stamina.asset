@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Stamina Potion
   itemIcon: {fileID: 1142608969, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  isStackable: 1
   valueAdded: 25
   consumiblesType: 1

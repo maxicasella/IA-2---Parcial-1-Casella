@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Rock
   m_EditorClassIdentifier: 
   itemName: Rock
-  itemIcon: {fileID: 1553659276, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  itemIcon: {fileID: 21300000, guid: 26089578be7aeac469cae94b6f330823, type: 3}
+  isStackable: 1
   valueAdded: 1
   miscellaneousType: 1

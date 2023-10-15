@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Crystal
   m_EditorClassIdentifier: 
   itemName: Crystal
-  itemIcon: {fileID: -1771537347, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  itemIcon: {fileID: 21300000, guid: f862a750c0a12ad46b343504fcbce8c2, type: 3}
+  isStackable: 1
   valueAdded: 1
   miscellaneousType: 3

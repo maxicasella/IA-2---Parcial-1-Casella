@@ -7,7 +7,7 @@ public abstract class Items: ScriptableObject
     [Header("Item")]
     public string itemName;
     public Sprite itemIcon;
-
+    public bool isStackable = true;
     public abstract Items GetItem();
     public abstract Tools GetTool();
     public abstract Miscellaneous GetMiscellaneous();
