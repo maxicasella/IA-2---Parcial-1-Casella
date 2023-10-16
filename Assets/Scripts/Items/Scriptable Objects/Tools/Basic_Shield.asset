@@ -15,4 +15,8 @@ MonoBehaviour:
   itemName: Basic Shield
   itemIcon: {fileID: 646594973, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
   isStackable: 0
-  toolType: 2
+  toolType: 0
+  rarity: 0
+  _baseDamage: 0
+  _criticalDamage: 0
+  _maxDurability: 0

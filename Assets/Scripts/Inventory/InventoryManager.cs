@@ -16,9 +16,10 @@ public class InventoryManager : MonoBehaviour
 {
     List<Slots> _originalItems;
     public List<Slots> items = new List<Slots>();
-    [SerializeField] GameObject _slotsHolder;
     GameObject[] _slots;
 
+    [SerializeField] Character_Equipment _characterEquipment;
+    [SerializeField] GameObject _slotsHolder;
     [SerializeField] Button _toolsButton;
     [SerializeField] Button _miscellaneousButton;
     [SerializeField] Button _consumiblesButton;
@@ -81,14 +82,6 @@ public class InventoryManager : MonoBehaviour
 
                         if (slot.GetItem().isStackable) _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = slot.GetQuantity().ToString();
                         else _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-
-                        if (slot.GetItem() is Consumibles)
-                        {
-                            var obj = slot.GetItem().GetConsumible();
-                            if (obj.consumiblesType == Consumibles.ConsumiblesType.Life) _slots[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "Q";
-
-                            else if(obj.consumiblesType == Consumibles.ConsumiblesType.Stamina) _slots[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "E";
-                        }
                     }
                     else
                     {
@@ -105,6 +98,7 @@ public class InventoryManager : MonoBehaviour
                 }
             }
         }
+        _characterEquipment.GetInventoryWeapons();
     }
 
     public bool AddItem(Items item,int value)
@@ -117,7 +111,6 @@ public class InventoryManager : MonoBehaviour
             if (items.Count < _slots.Length) items.Add(new Slots(item, value));
             else return false;
         }
-
         RefreshUI();
         return true;
     }
@@ -125,16 +118,20 @@ public class InventoryManager : MonoBehaviour
     public bool RemoveItem(Items item, int value)
     {
         Slots tempSlot = ContainsSlots(item);
+
         if (tempSlot != null)
         {
-            if(tempSlot.GetQuantity() > 1) tempSlot.Subtract(value);
-            else
+            tempSlot.Subtract(value);
+
+            if (tempSlot.GetQuantity() <= 0)
             {
                 var slotRemove = items.FirstOrDefault(slot => slot.GetItem() == item); //IA 2 LINQ - Parcial 1
-                if (slotRemove != null) items.Remove(slotRemove);
+                if (slotRemove != null)
+                    items.Remove(slotRemove);
             }
         }
-        else return false;
+        else return false; 
+
         RefreshUI();
         return true;
     }
@@ -155,9 +152,8 @@ public class InventoryManager : MonoBehaviour
 
     public void OriginalListOrder()
     {
-        items = new List<Slots> (_originalItems);
+        items = new List<Slots>(_originalItems);
 
         RefreshUI();
     }
-
 }

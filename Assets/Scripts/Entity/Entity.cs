@@ -14,11 +14,13 @@ public class Entity : MonoBehaviour, IDamageable
 {
     float _currentLife;
     float _currentStamina;
-    public BaseWeapon _activeWeapon;
+    Tools _activeSw;
 
     [SerializeField] float _maxLife;
     [SerializeField] float _maxStamina;
     [SerializeField] Character_HUD _myHud;
+    [SerializeField] Character_Equipment _myInventory;
+
 
     //Getters
     public float Life { get { return _currentLife; } }
@@ -31,7 +33,9 @@ public class Entity : MonoBehaviour, IDamageable
 
     void Update()
     {
-        _myHud.UpdateUI(_currentLife, _currentStamina, _activeWeapon);
+        _activeSw = _myInventory.GetEquippedWeapon(Tools.ToolType.Sword);
+        if(_activeSw != null) _myHud.UpdateUI(_currentLife, _currentStamina, _activeSw);
+        _myHud.UpdateUI(_currentLife, _currentStamina, _activeSw);
     }
     public void TakeDamage(float value)
     {

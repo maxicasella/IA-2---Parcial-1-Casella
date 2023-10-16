@@ -10,11 +10,29 @@ public class Character_HUD : MonoBehaviour
     [SerializeField] Image _staminaBarFull;
     [SerializeField] TextMeshProUGUI _durabilityWeaponTxt;
 
-    public void UpdateUI(float life, float stamina, BaseWeapon weapon)
+    float _previousLife;
+    float _previuosStamina;
+    float _previousDurability;
+
+    public void UpdateUI(float life, float stamina, Tools weapon)
     {
-        UpdateLifeBar(life);
-        UpdateStaminaBar(stamina);
-        UpdateWeaponDurability(weapon);
+        if (_previousLife != life)
+        {
+            UpdateLifeBar(life);
+            _previousLife = life;
+        }
+
+        if (_previuosStamina != stamina)
+        {
+            UpdateStaminaBar(stamina);
+            _previuosStamina = stamina;
+        }
+
+        if (_previousDurability != weapon.Durability)
+        {
+            UpdateWeaponDurability(weapon);
+            _previousDurability = weapon.Durability;
+        }
     }
 
     void UpdateLifeBar(float amount)
@@ -26,7 +44,7 @@ public class Character_HUD : MonoBehaviour
         _staminaBarFull.fillAmount = amount;
     }
 
-    void UpdateWeaponDurability(BaseWeapon weapon)
+    void UpdateWeaponDurability(Tools weapon)
     {
         var amount = weapon.Durability;
 
