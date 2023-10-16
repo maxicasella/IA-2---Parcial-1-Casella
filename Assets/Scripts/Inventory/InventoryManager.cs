@@ -31,10 +31,11 @@ public class InventoryManager : MonoBehaviour
         _consumiblesButton.onClick.AddListener(() => RefreshUI(FilterType.Consumibles));
 
         _slots = new GameObject[_slotsHolder.transform.childCount];
-        for (int i = 0; i < _slotsHolder.transform.childCount; i++)
-        {
-            _slots[i] = _slotsHolder.transform.GetChild(i).gameObject;
-        }
+
+        _slots = _slotsHolder.transform.Cast<Transform>()
+            .Select(child => child.gameObject)  //IA 2 - Parcial 1
+            .ToArray(); //IA 2 - Parcial 1
+
         RefreshUI();
      }
 
@@ -95,13 +96,15 @@ public class InventoryManager : MonoBehaviour
 
     public bool AddItem(Items item,int value)
     {
-        Slots slot = ContainsSlots(item);
-        if (slot != null && slot.GetItem().isStackable) slot.Add(value);
+        Slots slot = items.FirstOrDefault(s => s.GetItem() == item && s.GetItem().isStackable); //IA 2 - Parcial 1
+
+        if (slot != null) slot.Add(value);
         else
         {
             if (items.Count < _slots.Length) items.Add(new Slots(item, value));
             else return false;
         }
+
         RefreshUI();
         return true;
     }
