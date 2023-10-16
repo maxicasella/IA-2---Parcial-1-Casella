@@ -21,10 +21,13 @@ public class Entity : MonoBehaviour, IDamageable
     [SerializeField] Character_HUD _myHud;
     [SerializeField] Character_Equipment _myInventory;
 
+    public float GetNormalDamage { get { return _activeSw.NormalDamage; } }
+    public float GetCriticalDamage { get { return _activeSw.CriticalDamage; } }
 
     //Getters
     public float Life { get { return _currentLife; } }
     public float Stamina { get { return _currentStamina;} }
+
     void Awake()
     {
         _currentLife = _maxLife;
@@ -34,11 +37,16 @@ public class Entity : MonoBehaviour, IDamageable
     void Update()
     {
         _activeSw = _myInventory.GetEquippedWeapon(Tools.ToolType.Sword);
-        if(_activeSw != null) _myHud.UpdateUI(_currentLife, _currentStamina, _activeSw);
+        if (_activeSw != null) _myHud.UpdateUI(_currentLife, _currentStamina, _activeSw);
         _myHud.UpdateUI(_currentLife, _currentStamina, _activeSw);
     }
     public void TakeDamage(float value)
     {
         _currentLife -= value;
+    }
+
+    public void TakeDamage(float value, GameObject obj)
+    {
+        throw new System.NotImplementedException();
     }
 }

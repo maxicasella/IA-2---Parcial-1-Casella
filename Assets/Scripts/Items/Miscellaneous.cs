@@ -6,7 +6,8 @@ using UnityEngine;
 public class Miscellaneous : Items
 {
     [Header("Miscellaneous")]
-    public float valueAdded;
+    public int minValueAdded;
+    public int maxValueAdded;
 
     public MiscellaneousType miscellaneousType;
     public enum MiscellaneousType

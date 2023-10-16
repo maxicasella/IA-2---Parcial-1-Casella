@@ -6,7 +6,7 @@ using System.Linq;
 public class Character_Equipment : MonoBehaviour
 {
     
-    public List<Tools> _equippedWeapons = new List<Tools>();
+    List<Tools> _equippedWeapons = new List<Tools>();
     [SerializeField] InventoryManager _inventoryManager;
 
     public void Equip(Tools tool)

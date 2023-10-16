@@ -14,6 +14,7 @@ public enum FilterType
 }
 public class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager InventoryInstance { get; private set; }
     List<Slots> _originalItems;
     public List<Slots> items = new List<Slots>();
     GameObject[] _slots;
@@ -25,6 +26,11 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] Button _consumiblesButton;
     [SerializeField] Button _inventaryButton;
 
+    void Awake()
+    {
+        if (InventoryInstance) Destroy(gameObject);
+        else InventoryInstance = this;
+    }
     void Start()
     {
         _originalItems = new List<Slots>(items);
@@ -145,7 +151,7 @@ public class InventoryManager : MonoBehaviour
     {
         _originalItems = items.ToList(); //IA 2 LINQ - Parcial 1
 
-       items = items.OrderByDescending(slot => slot.GetQuantity()).ToList(); //IA 2 LINQ - Parcial 1
+        items = items.OrderByDescending(slot => slot.GetQuantity()).ToList(); //IA 2 LINQ - Parcial 1
 
         RefreshUI();
     }

@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: Wood
   itemIcon: {fileID: 928160301, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
   isStackable: 1
-  valueAdded: 1
+  minValueAdded: 1
+  maxValueAdded: 4
   miscellaneousType: 0
