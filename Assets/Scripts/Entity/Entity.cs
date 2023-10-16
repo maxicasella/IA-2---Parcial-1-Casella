@@ -14,9 +14,11 @@ public class Entity : MonoBehaviour, IDamageable
 {
     float _currentLife;
     float _currentStamina;
+    public BaseWeapon _activeWeapon;
 
     [SerializeField] float _maxLife;
     [SerializeField] float _maxStamina;
+    [SerializeField] Character_HUD _myHud;
 
     //Getters
     public float Life { get { return _currentLife; } }
@@ -25,6 +27,11 @@ public class Entity : MonoBehaviour, IDamageable
     {
         _currentLife = _maxLife;
         _currentStamina = _maxStamina;
+    }
+
+    void Update()
+    {
+        _myHud.UpdateUI(_currentLife, _currentStamina, _activeWeapon);
     }
     public void TakeDamage(float value)
     {

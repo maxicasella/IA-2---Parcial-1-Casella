@@ -21,6 +21,8 @@ public class BaseWeapon : MonoBehaviour
     public float Durability { get { return _actualDurability; } }
     public float CriticalDamage { get { return _criticalDamage; } }
 
+    BaseWeapon _actualWeapon;
+
     void Awake()
     {
         _actualDurability = _maxDurability;   
