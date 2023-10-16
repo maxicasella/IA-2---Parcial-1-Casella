@@ -12,7 +12,7 @@ public class DestructibleObjects : MonoBehaviour,IDamageable
     {
         _life = _maxLife;
     }
-    void AddResources()
+    public void AddResources()
     {
         var value = Random.Range(_resource.minValueAdded, _resource.maxValueAdded);
         InventoryManager.InventoryInstance.AddItem(_resource, value);

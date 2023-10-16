@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: Plants
   itemIcon: {fileID: -1042065062, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
   isStackable: 1
-  valueAdded: 1
+  minValueAdded: 0
+  maxValueAdded: 1
   miscellaneousType: 4

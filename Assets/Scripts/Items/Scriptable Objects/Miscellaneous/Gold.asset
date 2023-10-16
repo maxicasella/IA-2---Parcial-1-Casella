@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: Gold
   itemIcon: {fileID: 21300000, guid: a3dbc69145c176049912e4bfd8d4e365, type: 3}
   isStackable: 1
-  valueAdded: 1
+  minValueAdded: 1
+  maxValueAdded: 3
   miscellaneousType: 5

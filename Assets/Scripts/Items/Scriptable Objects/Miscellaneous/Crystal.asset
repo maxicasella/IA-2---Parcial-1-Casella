@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: Crystal
   itemIcon: {fileID: 21300000, guid: f862a750c0a12ad46b343504fcbce8c2, type: 3}
   isStackable: 1
-  valueAdded: 1
+  minValueAdded: 1
+  maxValueAdded: 2
   miscellaneousType: 3

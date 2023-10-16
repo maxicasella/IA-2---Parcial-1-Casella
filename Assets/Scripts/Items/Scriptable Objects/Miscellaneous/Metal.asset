@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: Metal
   itemIcon: {fileID: 21300000, guid: 29c3ade20886b8c44ba9845dc842d591, type: 3}
   isStackable: 1
-  valueAdded: 1
+  minValueAdded: 1
+  maxValueAdded: 4
   miscellaneousType: 2
