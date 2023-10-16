@@ -14,6 +14,7 @@ public enum FilterType
 }
 public class InventoryManager : MonoBehaviour
 {
+    List<Slots> _originalItems;
     public List<Slots> items = new List<Slots>();
     [SerializeField] GameObject _slotsHolder;
     GameObject[] _slots;
@@ -23,8 +24,9 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] Button _consumiblesButton;
     [SerializeField] Button _inventaryButton;
 
-    private void Start()
-     {
+    void Start()
+    {
+        _originalItems = new List<Slots>(items);
         _inventaryButton.onClick.AddListener(() => RefreshUI(FilterType.All));
         _toolsButton.onClick.AddListener(() => RefreshUI(FilterType.Tools));
         _miscellaneousButton.onClick.AddListener(() => RefreshUI(FilterType.Miscellaneous));
@@ -33,20 +35,20 @@ public class InventoryManager : MonoBehaviour
         _slots = new GameObject[_slotsHolder.transform.childCount];
 
         _slots = _slotsHolder.transform.Cast<Transform>()
-            .Select(child => child.gameObject)  //IA 2 - Parcial 1
-            .ToArray(); //IA 2 - Parcial 1
+            .Select(child => child.gameObject)  //IA 2 LINQ - Parcial 1
+            .ToArray(); //IA 2 LINQ- Parcial 1
 
         RefreshUI();
-     }
+    }
 
     public void RefreshUI(FilterType filterType = FilterType.All)
     {
         List<Slots> filteredItems;
 
-        if (filterType == FilterType.All) filteredItems = items.ToList(); //IA 2 - Parcial 1
+        if (filterType == FilterType.All) filteredItems = items.ToList(); //IA 2 LINQ - Parcial 1
         else
         {
-            //IA 2 - Parcial 1
+            //IA 2 LINQ - Parcial 1
             filteredItems = items.Where(slot =>
             {
                 Items currentItem = slot.GetItem();
@@ -61,42 +63,53 @@ public class InventoryManager : MonoBehaviour
                     default:
                         return false;
                 }
-            }).ToList(); //IA 2 - Parcial 1
+            }).ToList(); //IA 2 LINQ - Parcial 1
         }
 
-        for (int i = 0; i < _slots.Length; i++)
+        if (filteredItems.Any()) //IA 2 LINQ - Parcial 1
         {
-            try
+            for (int i = 0; i < _slots.Length; i++)
             {
-                Slots slot = filteredItems.ElementAtOrDefault(i);
-
-                if (slot != null)
+                try
                 {
-                    _slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
-                    _slots[i].transform.GetChild(0).GetComponent<Image>().sprite = slot.GetItem().itemIcon;
+                    Slots slot = filteredItems.ElementAtOrDefault(i);
 
-                    if (slot.GetItem().isStackable) _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = slot.GetQuantity().ToString();
-                    else _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                    if (slot != null)
+                    {
+                        _slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
+                        _slots[i].transform.GetChild(0).GetComponent<Image>().sprite = slot.GetItem().itemIcon;
+
+                        if (slot.GetItem().isStackable) _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = slot.GetQuantity().ToString();
+                        else _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+
+                        if (slot.GetItem() is Consumibles)
+                        {
+                            var obj = slot.GetItem().GetConsumible();
+                            if (obj.consumiblesType == Consumibles.ConsumiblesType.Life) _slots[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "Q";
+
+                            else if(obj.consumiblesType == Consumibles.ConsumiblesType.Stamina) _slots[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "E";
+                        }
+                    }
+                    else
+                    {
+                        _slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
+                        _slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
+                        _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                    }
                 }
-                else
+                catch
                 {
                     _slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
                     _slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
                     _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
                 }
             }
-            catch
-            {
-                _slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
-                _slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
-                _slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-            }
         }
     }
 
     public bool AddItem(Items item,int value)
     {
-        Slots slot = items.FirstOrDefault(s => s.GetItem() == item && s.GetItem().isStackable); //IA 2 - Parcial 1
+        Slots slot = items.FirstOrDefault(s => s.GetItem() == item && s.GetItem().isStackable); //IA 2 LINQ - Parcial 1
 
         if (slot != null) slot.Add(value);
         else
@@ -117,8 +130,7 @@ public class InventoryManager : MonoBehaviour
             if(tempSlot.GetQuantity() > 1) tempSlot.Subtract(value);
             else
             {
-
-                var slotRemove = items.FirstOrDefault(slot => slot.GetItem() == item); //IA 2 - Parcial 1
+                var slotRemove = items.FirstOrDefault(slot => slot.GetItem() == item); //IA 2 LINQ - Parcial 1
                 if (slotRemove != null) items.Remove(slotRemove);
             }
         }
@@ -127,8 +139,25 @@ public class InventoryManager : MonoBehaviour
         return true;
     }
 
-    public Slots ContainsSlots(Items item) //IA 2 - Parcial 1
+    public Slots ContainsSlots(Items item) //IA 2 LINQ - Parcial 1
     {
         return items.FirstOrDefault(slot => slot.GetItem()==item);
     }
+
+    public void OrderListDescending()
+    {
+        _originalItems = items.ToList(); //IA 2 LINQ - Parcial 1
+
+       items = items.OrderByDescending(slot => slot.GetQuantity()).ToList(); //IA 2 LINQ - Parcial 1
+
+        RefreshUI();
+    }
+
+    public void OriginalListOrder()
+    {
+        items = new List<Slots> (_originalItems);
+
+        RefreshUI();
+    }
+
 }
