@@ -10,9 +10,12 @@ public class MerchantSystem : MonoBehaviour
     [SerializeField] GameObject _merchantCanvas;
     [SerializeField] CharacterController _character;
     [SerializeField] List<CraftRecipes> _availableRecipes;
-    List<Slots> recipes = new List<Slots>();
     [SerializeField] GameObject _slotsHolder;
-    GameObject[] _slots;
+    [SerializeField] GameObject _txtFailed;
+    [SerializeField] float _timeMessage;
+    [SerializeField] BaseWeapon _entityWeapon;
+    List<Slots> recipes = new List<Slots>();
+    public GameObject[] _slots;
     void Awake()
     {
         _merchantCanvas.SetActive(false);
@@ -24,7 +27,10 @@ public class MerchantSystem : MonoBehaviour
             Slots newSlot = new Slots();
             newSlot.name = recipe.recipeName;
             newSlot.imgIcon = recipe.imgIcon; 
-            newSlot.texts = recipe.texts;     
+            newSlot.texts = recipe.texts;
+            newSlot.craftObj = recipe.craftObj;
+            newSlot.materialsRequirement = recipe.materialsRequirement;
+            newSlot.valueMaterialsRequirement = recipe.valueMaterialsRequirement;
             return newSlot;
         }).ToList(); //IA 2 LINQ- Parcial 1
 
@@ -74,5 +80,44 @@ public class MerchantSystem : MonoBehaviour
                 Debug.Log("Refres UI failed");
             }
         }
+    }
+    public void CraftRecipeClicked(Slots recipe)
+    {
+        if (InventoryManager.InventoryInstance.HasMaterialsForRecipe(recipe))
+        {
+            InventoryManager.InventoryInstance.AddItem(recipe.craftObj, 1);
+
+            InventoryManager.InventoryInstance.ConsumeMaterials(recipe.materialsRequirement, recipe.valueMaterialsRequirement);
+        }
+        else StartCoroutine(FailedText());
+    }
+
+    public void CraftRecipeByIndex(int recipeIndex)
+    {
+        if (recipeIndex >= 0 && recipeIndex < recipes.Count)
+        {
+            Slots recipe = recipes[recipeIndex];
+            CraftRecipeClicked(recipe);
+            if (recipeIndex == 4) RepairWeaponClicked(recipe);
+        }
+    }
+    public void RepairWeaponClicked(Slots recipe)
+    {
+        if (_entityWeapon != null)
+        {
+            if (InventoryManager.InventoryInstance.HasMaterialsForRecipe(recipe))
+            {
+                _entityWeapon.Repair(150f);
+                    InventoryManager.InventoryInstance.ConsumeMaterials(recipe.materialsRequirement, recipe.valueMaterialsRequirement);
+            }
+            else StartCoroutine(FailedText());
+        }
+    }
+
+    IEnumerator FailedText()// IA 2 - Parcial 1
+    {
+        _txtFailed.SetActive(true);
+        yield return new WaitForSeconds(_timeMessage);
+        _txtFailed.SetActive(false);
     }
 }

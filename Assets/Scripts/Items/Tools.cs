@@ -23,13 +23,14 @@ public class Tools : Items
 
     [SerializeField] protected float _baseDamage;
     [SerializeField] protected float _criticalDamage;
-    [SerializeField] float _maxDurability;
 
+    public float _maxDurability;
     public float _actualDurability;
 
     //Getters
     public float NormalDamage { get { return _baseDamage; } }
     public float Durability { get { return _actualDurability; } set { _actualDurability -= value; } }
+    public float RepairWeapon { set { _actualDurability += value; } }
     public float CriticalDamage { get { return _criticalDamage; } }
 
     void Awake()
@@ -55,5 +56,9 @@ public class Tools : Items
     public override Tools GetTool()
     {
         return this;
+    }
+    public void Repair()
+    {
+        if (_actualDurability < _maxDurability) _actualDurability = _maxDurability;
     }
 }

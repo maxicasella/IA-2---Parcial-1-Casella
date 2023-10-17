@@ -26,4 +26,9 @@ public class BaseWeapon : MonoBehaviour
     {
         _myEntity.WeaponDurability(value);
     }
+
+    public void Repair(float value)
+    {
+        _myEntity.Repair(value);
+    }
 }

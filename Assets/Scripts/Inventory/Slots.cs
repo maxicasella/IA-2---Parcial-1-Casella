@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public class Slots
@@ -10,6 +11,9 @@ public class Slots
     public string name;
     public Sprite imgIcon;
     public Texts texts;
+    public Items[] materialsRequirement;
+    public int[] valueMaterialsRequirement;
+    public Items craftObj;
 
     public Slots()
     {
@@ -47,5 +51,13 @@ public class Slots
     public string GetTxt()
     {
         return texts.textsArray[0].ToString();
+    }
+    public bool HasMaterialsForRecipe(Slots recipe, List<Slots> originalItems)
+    {
+        return !recipe.materialsRequirement
+         .Select((material, index) => new { Material = material, Amount = recipe.valueMaterialsRequirement[index] })
+         .Any(materialInfo => originalItems
+             .Where(slot => slot.GetItem() == materialInfo.Material)
+             .Sum(slot => slot.GetQuantity()) < materialInfo.Amount); //IA 2 LINQ - Parcial 1
     }
 }

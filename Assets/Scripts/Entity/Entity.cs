@@ -24,6 +24,8 @@ public class Entity : MonoBehaviour, IDamageable
     public float GetNormalDamage { get { return _activeSw.NormalDamage; } }
     public float GetCriticalDamage { get { return _activeSw.CriticalDamage; } }
 
+    public Tools ActiveSword { get { return _activeSw; } }
+
     //Getters
     public float Life { get { return _currentLife; } }
     public float Stamina { get { return _currentStamina; } }
@@ -53,5 +55,10 @@ public class Entity : MonoBehaviour, IDamageable
     public void WeaponDurability(float value)
     {
         _activeSw.Durability = value;
+    }
+
+    public void Repair(float value)
+    {
+        _activeSw.RepairWeapon= value;
     }
 }

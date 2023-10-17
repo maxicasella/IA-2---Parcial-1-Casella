@@ -107,18 +107,19 @@ public class InventoryManager : MonoBehaviour
         _characterEquipment.GetInventoryWeapons();
     }
 
-    public bool AddItem(Items item,int value)
+    public void AddItem(Items item, int value)
     {
-        Slots slot = items.FirstOrDefault(s => s.GetItem() == item && s.GetItem().isStackable); //IA 2 LINQ - Parcial 1
+        Slots slot = items.Concat(_originalItems).FirstOrDefault(s => s.GetItem() == item); //IA 2 LINQ- Parcial 1
 
-        if (slot != null) slot.Add(value);
+        if (slot != null)
+        {
+            if (item.isStackable) slot.Add(value);
+        }
         else
         {
-            if (items.Count < _slots.Length) items.Add(new Slots(item, value));
-            else return false;
+            if (items.Count < _slots.Length) items.Add(new Slots(item, value)); 
         }
         RefreshUI();
-        return true;
     }
 
     public bool RemoveItem(Items item, int value)
@@ -131,12 +132,11 @@ public class InventoryManager : MonoBehaviour
 
             if (tempSlot.GetQuantity() <= 0)
             {
-                var slotRemove = items.FirstOrDefault(slot => slot.GetItem() == item); //IA 2 LINQ - Parcial 1
+                var slotRemove = items.FirstOrDefault(slot => slot.GetItem() == item);  //IA 2 LINQ - Parcial 1
                 if (slotRemove != null)
                     items.Remove(slotRemove);
             }
-            ConsumeMaterials(new List<Items> { item }, value);
-
+            ConsumeMaterials(new Items[] { item }, new int[] { value });  
             RefreshUI();
             return true;
         }
@@ -177,16 +177,46 @@ public class InventoryManager : MonoBehaviour
         return items.Any(slot => slot.GetItem() == item && slot.GetQuantity() >= quantity);//IA 2 LINQ - Parcial 1
 
     }
-    public bool ConsumeMaterials(List<Items> materials, int value)
-    {
-        if (materials.All(material => HasItem(material,value)))
+  public void ConsumeMaterials(Items[] materials, int[] values)
+{
+        if (materials != null && values != null && materials.Length == values.Length)
         {
-            foreach (var material in materials)
+            for (int i = 0; i < materials.Length; i++)
             {
-                RemoveItem(material, value);
+                Items material = materials[i];
+                int value = values[i];
+
+                if (material != null)
+                {
+                    Slots slot = items.Concat(_originalItems).FirstOrDefault(s => s.GetItem() == material); //IA 2 LINQ - Parcial 1
+
+                    if (slot != null)
+                    {
+                        slot.Subtract(value);
+                        if (slot.GetQuantity() <= 0)
+                        {
+                            var slotRemove = items.FirstOrDefault(s => s == slot); //IA 2 LINQ - Parcial 1
+                            if (slotRemove != null) items.Remove(slotRemove);
+                        }
+                    }
+                }
             }
+            RefreshUI();
+        }
+    }
+    public bool HasMaterialsForRecipe(Slots recipe)
+    {
+        if (recipe.materialsRequirement != null && recipe.materialsRequirement.Length > 0)
+        {
+            return !recipe.materialsRequirement
+                .Select((material, index) => new { Material = material, Amount = recipe.valueMaterialsRequirement[index] })
+                .Any(materialInfo => _originalItems
+                    .Where(slot => slot.GetItem() == materialInfo.Material)
+                    .Sum(slot => slot.GetQuantity()) < materialInfo.Amount); //IA 2 LINQ - Parcial 1
+        }
+        else
+        {
             return true;
         }
-        return false;
     }
 }
