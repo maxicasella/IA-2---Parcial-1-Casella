@@ -13,17 +13,20 @@ MonoBehaviour:
   m_Name: SwordQuest
   m_EditorClassIdentifier: 
   questName: El arma del guerrero
-  _texts:
+  texts:
     textsArray:
-    - '- Recoleta 20 de metal
+    - '- Recolecta 20 de metal.
 
-      - Recoleta 20 de roca
+      - Recolecta 20 de roca.
 
-      - Recoleta 10 de
-      cristal
-
-'
+      - Recolecta
+      20 de madera.'
+  rewardsValue: 20
   rewards:
-  - {fileID: 11400000, guid: 223200f70b0ce19469960c376425e39d, type: 2}
-  xpReward: 0
+  - {fileID: 11400000, guid: 7cb3e3c28e9040244a90e4141d1e9755, type: 2}
+  questRequirements:
+  - {fileID: 11400000, guid: 5eb871e2a42a8b44ebc717cdf6bc65d5, type: 2}
+  - {fileID: 11400000, guid: 0a57f30f7b08b884db0f2478ba9dd167, type: 2}
+  - {fileID: 11400000, guid: db722f606d19c814aaf4a7425dd1f35f, type: 2}
+  valueQuestRequirements: 140000001400000014000000
   questType: 0

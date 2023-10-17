@@ -26,7 +26,7 @@ public class Entity : MonoBehaviour, IDamageable
 
     //Getters
     public float Life { get { return _currentLife; } }
-    public float Stamina { get { return _currentStamina;} }
+    public float Stamina { get { return _currentStamina; } }
 
     void Awake()
     {
@@ -48,5 +48,10 @@ public class Entity : MonoBehaviour, IDamageable
     public void TakeDamage(float value, GameObject obj)
     {
         throw new System.NotImplementedException();
+    }
+
+    public void WeaponDurability(float value)
+    {
+        _activeSw.Durability = value;
     }
 }

@@ -22,4 +22,8 @@ public class BaseWeapon : MonoBehaviour
         if(_critcalDmg != _myEntity.GetCriticalDamage) _critcalDmg = _myEntity.GetCriticalDamage;
     }
 
+    public void Durability(float value)
+    {
+        _myEntity.WeaponDurability(value);
+    }
 }

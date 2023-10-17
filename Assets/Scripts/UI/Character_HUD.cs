@@ -48,6 +48,6 @@ public class Character_HUD : MonoBehaviour
     {
         var amount = weapon.Durability;
 
-        _durabilityWeaponTxt.text = amount.ToString();
+        _durabilityWeaponTxt.text = amount.ToString("00");
     }
 }

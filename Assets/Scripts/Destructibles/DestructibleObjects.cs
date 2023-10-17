@@ -22,6 +22,7 @@ public class DestructibleObjects : MonoBehaviour,IDamageable
         if(other.gameObject.layer == 7)
         {
             var collision = other.gameObject.GetComponent<BaseWeapon>();
+            collision.Durability(0.5f);
             AddResources();
             TakeDamage(collision.NormalDamage);
         }

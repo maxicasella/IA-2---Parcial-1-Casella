@@ -17,6 +17,7 @@ MonoBehaviour:
   isStackable: 0
   toolType: 0
   rarity: 1
-  _baseDamage: 10
-  _criticalDamage: 20
-  _maxDurability: 150
+  _baseDamage: 25
+  _criticalDamage: 40
+  _maxDurability: 250
+  _actualDurability: 150

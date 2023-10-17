@@ -162,4 +162,13 @@ public class InventoryManager : MonoBehaviour
 
         RefreshUI();
     }
+    public int GetItemQuantity(Items item)
+    {
+        int quantity = 0;
+        foreach (Slots slot in items)
+        {
+            if (slot.GetItem() == item) quantity += slot.GetQuantity();
+        }
+        return quantity;
+    }
 }

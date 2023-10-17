@@ -13,15 +13,22 @@ MonoBehaviour:
   m_Name: ShieldQuest
   m_EditorClassIdentifier: 
   questName: Defensa personal
-  _texts:
+  texts:
     textsArray:
-    - '- Recolecta 15 de roca
+    - '- Recolecta 10 de madera.
 
-      - Recolecta 20 de madera
+      - Recolecta 10 de metal.
 
       - Recolecta
-      10 de oro'
+      20 de roca.
+
+'
+  rewardsValue: 10
   rewards:
-  - {fileID: 11400000, guid: 93a3560857d33ce4c96f5e941cbafc32, type: 2}
-  xpReward: 0
+  - {fileID: 11400000, guid: cee2d29fad0979c40bbb39e50329c072, type: 2}
+  questRequirements:
+  - {fileID: 11400000, guid: db722f606d19c814aaf4a7425dd1f35f, type: 2}
+  - {fileID: 11400000, guid: 5eb871e2a42a8b44ebc717cdf6bc65d5, type: 2}
+  - {fileID: 11400000, guid: 0a57f30f7b08b884db0f2478ba9dd167, type: 2}
+  valueQuestRequirements: 0a0000000a00000014000000
   questType: 1

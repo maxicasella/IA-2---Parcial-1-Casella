@@ -25,11 +25,11 @@ public class Tools : Items
     [SerializeField] protected float _criticalDamage;
     [SerializeField] float _maxDurability;
 
-    protected float _actualDurability;
+    public float _actualDurability;
 
     //Getters
     public float NormalDamage { get { return _baseDamage; } }
-    public float Durability { get { return _actualDurability; } }
+    public float Durability { get { return _actualDurability; } set { _actualDurability -= value; } }
     public float CriticalDamage { get { return _criticalDamage; } }
 
     void Awake()
