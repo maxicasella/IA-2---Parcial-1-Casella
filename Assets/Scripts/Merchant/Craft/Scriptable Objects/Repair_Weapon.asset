@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 765910e852f681e41b4fac66f3e1a91f, type: 3}
+  m_Name: Repair_Weapon
+  m_EditorClassIdentifier: 
+  recipeName: Reparar arma
+  imgIcon: {fileID: 609963671, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  texts:
+    textsArray: []
+  craftObj: {fileID: 0}
+  materialsRequirement:
+  - {fileID: 11400000, guid: 0a57f30f7b08b884db0f2478ba9dd167, type: 2}
+  - {fileID: 11400000, guid: 5eb871e2a42a8b44ebc717cdf6bc65d5, type: 2}
+  - {fileID: 11400000, guid: cee2d29fad0979c40bbb39e50329c072, type: 2}
+  valueMaterialsRequirement: 0a0000000a00000005000000
+  recipeType: 0

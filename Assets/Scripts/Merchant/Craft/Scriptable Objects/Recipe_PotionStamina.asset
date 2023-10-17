@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 765910e852f681e41b4fac66f3e1a91f, type: 3}
+  m_Name: Recipe_PotionStamina
+  m_EditorClassIdentifier: 
+  recipeName: "Poci\xF3n de stamina"
+  imgIcon: {fileID: -1522854942, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
+  texts:
+    textsArray: []
+  craftObj: {fileID: 11400000, guid: 7c0e2bc0cb9119c48966d485548b3883, type: 2}
+  materialsRequirement:
+  - {fileID: 11400000, guid: 214c77840055cba468bf62b4ca754220, type: 2}
+  - {fileID: 11400000, guid: db722f606d19c814aaf4a7425dd1f35f, type: 2}
+  - {fileID: 11400000, guid: cee2d29fad0979c40bbb39e50329c072, type: 2}
+  valueMaterialsRequirement: 050000000400000005000000
+  recipeType: 1
