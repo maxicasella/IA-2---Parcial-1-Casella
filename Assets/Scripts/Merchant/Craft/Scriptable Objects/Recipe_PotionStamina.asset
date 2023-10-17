@@ -15,7 +15,12 @@ MonoBehaviour:
   recipeName: "Poci\xF3n de stamina"
   imgIcon: {fileID: -1522854942, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
   texts:
-    textsArray: []
+    textsArray:
+    - '- 5 de hongos
+
+      - 4 de madera
+
+      - 5 de oro'
   craftObj: {fileID: 11400000, guid: 7c0e2bc0cb9119c48966d485548b3883, type: 2}
   materialsRequirement:
   - {fileID: 11400000, guid: 214c77840055cba468bf62b4ca754220, type: 2}
@@ -23,3 +28,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cee2d29fad0979c40bbb39e50329c072, type: 2}
   valueMaterialsRequirement: 050000000400000005000000
   recipeType: 1
+  materialsRequirements: []

@@ -15,7 +15,12 @@ MonoBehaviour:
   recipeName: Escudo de madera
   imgIcon: {fileID: 366096639, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
   texts:
-    textsArray: []
+    textsArray:
+    - '- 10 de madera
+
+      - 10 de roca
+
+      - 10 de oro'
   craftObj: {fileID: 11400000, guid: 93a3560857d33ce4c96f5e941cbafc32, type: 2}
   materialsRequirement:
   - {fileID: 11400000, guid: db722f606d19c814aaf4a7425dd1f35f, type: 2}
@@ -23,3 +28,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cee2d29fad0979c40bbb39e50329c072, type: 2}
   valueMaterialsRequirement: 0a0000000a00000008000000
   recipeType: 1
+  materialsRequirements:
+  - material: {fileID: 0}
+    quantity: 0
+  - material: {fileID: 0}
+    quantity: 0

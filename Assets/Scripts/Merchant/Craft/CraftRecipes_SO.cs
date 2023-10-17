@@ -8,6 +8,7 @@ public class CraftRecipes_SO : CraftRecipes
     [Header("Recipe")]
 
     public RecipeType recipeType;
+    public List<MaterialRequirement> materialsRequirements;
     public enum RecipeType
     {
         Repair,

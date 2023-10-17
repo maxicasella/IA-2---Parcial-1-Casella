@@ -79,7 +79,7 @@ public class InventoryManager : MonoBehaviour
             {
                 try
                 {
-                    Slots slot = filteredItems.ElementAtOrDefault(i);
+                    Slots slot = filteredItems.ElementAtOrDefault(i); //IA 2 LINQ- Parcial 1
 
                     if (slot != null)
                     {
@@ -135,11 +135,12 @@ public class InventoryManager : MonoBehaviour
                 if (slotRemove != null)
                     items.Remove(slotRemove);
             }
-        }
-        else return false; 
+            ConsumeMaterials(new List<Items> { item }, value);
 
-        RefreshUI();
-        return true;
+            RefreshUI();
+            return true;
+        }
+        return false;
     }
 
     public Slots ContainsSlots(Items item) //IA 2 LINQ - Parcial 1
@@ -170,5 +171,22 @@ public class InventoryManager : MonoBehaviour
             if (slot.GetItem() == item) quantity += slot.GetQuantity();
         }
         return quantity;
+    }
+    public bool HasItem(Items item, int quantity)
+    {
+        return items.Any(slot => slot.GetItem() == item && slot.GetQuantity() >= quantity);//IA 2 LINQ - Parcial 1
+
+    }
+    public bool ConsumeMaterials(List<Items> materials, int value)
+    {
+        if (materials.All(material => HasItem(material,value)))
+        {
+            foreach (var material in materials)
+            {
+                RemoveItem(material, value);
+            }
+            return true;
+        }
+        return false;
     }
 }

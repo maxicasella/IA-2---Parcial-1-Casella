@@ -15,7 +15,12 @@ MonoBehaviour:
   recipeName: Reparar arma
   imgIcon: {fileID: 609963671, guid: bc9b4b58efbbe694fb68fe6d0ea174bd, type: 3}
   texts:
-    textsArray: []
+    textsArray:
+    - '- 10 de roca
+
+      - 10 de metal
+
+      - 5 de oro'
   craftObj: {fileID: 0}
   materialsRequirement:
   - {fileID: 11400000, guid: 0a57f30f7b08b884db0f2478ba9dd167, type: 2}
@@ -23,3 +28,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cee2d29fad0979c40bbb39e50329c072, type: 2}
   valueMaterialsRequirement: 0a0000000a00000005000000
   recipeType: 0
+  materialsRequirements: []
