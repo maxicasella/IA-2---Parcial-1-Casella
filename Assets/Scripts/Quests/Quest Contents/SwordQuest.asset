@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7981d9bb5e0af324cbd55bb9990ecf93, type: 3}
+  m_Name: SwordQuest
+  m_EditorClassIdentifier: 
+  questName: El arma del guerrero
+  _texts:
+    textsArray:
+    - '- Recoleta 20 de metal
+
+      - Recoleta 20 de roca
+
+      - Recoleta 10 de
+      cristal
+
+'
+  rewards:
+  - {fileID: 11400000, guid: 223200f70b0ce19469960c376425e39d, type: 2}
+  xpReward: 0
+  questType: 0

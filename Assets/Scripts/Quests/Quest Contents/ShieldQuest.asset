@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7981d9bb5e0af324cbd55bb9990ecf93, type: 3}
+  m_Name: ShieldQuest
+  m_EditorClassIdentifier: 
+  questName: Defensa personal
+  _texts:
+    textsArray:
+    - '- Recolecta 15 de roca
+
+      - Recolecta 20 de madera
+
+      - Recolecta
+      10 de oro'
+  rewards:
+  - {fileID: 11400000, guid: 93a3560857d33ce4c96f5e941cbafc32, type: 2}
+  xpReward: 0
+  questType: 1
