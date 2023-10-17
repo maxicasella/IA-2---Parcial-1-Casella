@@ -13,22 +13,22 @@ public class QuestsTracker : MonoBehaviour
     [SerializeField] float _timeMessage;
 
     bool _completedQuest;
+    bool _questChecked;
     void Start()
     {
+        _completedQuest = false;
+        _questChecked = false;
        _questManager.CompletedQuest += OnQuestCompleted;
     }
 
     void Update()
     {
-        if(!_completedQuest && _questManager.ActualQuest != null)
+        if (!_completedQuest && _questManager.ActualQuest != null && !_questChecked)
         {
-            Quest_SO matchingQuest = _questManager._quests.FirstOrDefault(quest => quest.MatchesRandomQuest(_questManager.ActualQuest)); //IA 2 LINQ - Parcial 1
-            
-            if (matchingQuest!=null)
-            {
-                _questManager.QuestCompleted(_questManager.ActualQuest);
-            }
+            _questChecked = true;
+            CheckQuest();
         }
+
     }
     public void OnQuestCompleted(RandomQuest quest)
     {
@@ -42,14 +42,14 @@ public class QuestsTracker : MonoBehaviour
         {
             completedQuest.questCompleted = true;
             _completedQuest = true;
-            _txt.text = "¡Logro cumplido!";
-            _txt.color = Color.green;
+            _questManager.ChangeQuest();
             foreach (var reward in completedQuest.rewards)
             {
                 InventoryManager.InventoryInstance.AddItem(reward, completedQuest.rewardsValue);
             }
-            StartCoroutine(UpdateText());
         }
+        else return;
+        StartCoroutine(UpdateText());
     }
     private bool CheckQuestRequirements(Quest_SO quest)
     {
@@ -60,11 +60,31 @@ public class QuestsTracker : MonoBehaviour
 
         var requirementPairs = questRequirements.Zip(valueRequirements, (item, value) => new { Item = item, Value = value }); //IA 2 LINQ - Parcial 1
 
-        return requirementPairs.All(pair => InventoryManager.InventoryInstance.GetItemQuantity(pair.Item) >= pair.Value);//IA 2 LINQ - Parcial 1
+        foreach (var pair in requirementPairs)
+        {
+            int quantity = InventoryManager.InventoryInstance.GetItemQuantity(pair.Item);
+            if (quantity < pair.Value) return false;
+        }
+        return true;
     }
+
+    void CheckQuest()
+    {
+        Quest_SO matchingQuest = _questManager._quests.FirstOrDefault(quest => quest.MatchesRandomQuest(_questManager.ActualQuest));
+
+        if (matchingQuest != null)
+        {
+            _questManager.QuestCompleted(_questManager.ActualQuest);
+            _questChecked = false;
+        }
+    }
+
     IEnumerator UpdateText() //IA 2 - Parcial 1
     {
+        _txt.text = "¡Logro cumplido!";
+        _txt.color = Color.green;
         yield return new WaitForSeconds(_timeMessage);
+        _txt.color = Color.white;
         _txt.text = "Sin misiones activas";
         _completedQuest = false;
     }

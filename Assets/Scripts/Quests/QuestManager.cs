@@ -39,8 +39,12 @@ public class QuestManager : MonoBehaviour
         {
             CompletedQuest(completedQuest);
             Debug.Log("CompletedQuest event called.");
-            _selectedQuest = null;
         }
+    }
+
+    public void ChangeQuest()
+    {
+        _selectedQuest = null;
     }
     public Quest_SO GetCompletedQuest(RandomQuest quest)
     {
