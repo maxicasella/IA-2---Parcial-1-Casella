@@ -57,8 +57,8 @@ public class Entity : MonoBehaviour, IDamageable
         _activeSw.Durability = value;
     }
 
-    public void Repair(float value)
+    public void Repair()
     {
-        _activeSw.RepairWeapon= value;
+        if(_activeSw._actualDurability < _activeSw._maxDurability) _activeSw._actualDurability = _activeSw._maxDurability;
     }
 }

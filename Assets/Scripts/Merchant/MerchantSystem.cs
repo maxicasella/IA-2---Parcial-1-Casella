@@ -97,8 +97,8 @@ public class MerchantSystem : MonoBehaviour
         if (recipeIndex >= 0 && recipeIndex < recipes.Count)
         {
             Slots recipe = recipes[recipeIndex];
-            CraftRecipeClicked(recipe);
-            if (recipeIndex == 4) RepairWeaponClicked(recipe);
+            if(recipeIndex !=4) CraftRecipeClicked(recipe);
+            else if(recipeIndex == 4) RepairWeaponClicked(recipe);
         }
     }
     public void RepairWeaponClicked(Slots recipe)
@@ -107,7 +107,7 @@ public class MerchantSystem : MonoBehaviour
         {
             if (InventoryManager.InventoryInstance.HasMaterialsForRecipe(recipe))
             {
-                _entityWeapon.Repair(150f);
+                _entityWeapon.Repair();
                     InventoryManager.InventoryInstance.ConsumeMaterials(recipe.materialsRequirement, recipe.valueMaterialsRequirement);
             }
             else StartCoroutine(FailedText());
