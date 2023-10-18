@@ -117,7 +117,8 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            if (items.Count < _slots.Length) items.Add(new Slots(item, value)); 
+            if (items.Count < _slots.Length) items.Add(new Slots(item, value));
+            _originalItems.Add(new Slots(item, value));
         }
         RefreshUI();
     }
@@ -178,7 +179,7 @@ public class InventoryManager : MonoBehaviour
 
     }
   public void ConsumeMaterials(Items[] materials, int[] values)
-{
+ {
         if (materials != null && values != null && materials.Length == values.Length)
         {
             for (int i = 0; i < materials.Length; i++)
@@ -196,13 +197,17 @@ public class InventoryManager : MonoBehaviour
                         if (slot.GetQuantity() <= 0)
                         {
                             var slotRemove = items.FirstOrDefault(s => s == slot); //IA 2 LINQ - Parcial 1
-                            if (slotRemove != null) items.Remove(slotRemove);
-                        }
+                            if (slotRemove != null)
+                            {
+                                items.Remove(slotRemove);
+                                _originalItems.Remove(slot);
+                            }
+                         }
                     }
                 }
             }
-            RefreshUI();
         }
+        RefreshUI();
     }
     public bool HasMaterialsForRecipe(Slots recipe)
     {
@@ -210,13 +215,10 @@ public class InventoryManager : MonoBehaviour
         {
             return !recipe.materialsRequirement
                 .Select((material, index) => new { Material = material, Amount = recipe.valueMaterialsRequirement[index] })
-                .Any(materialInfo => _originalItems
+                .Any(materialInfo => items
                     .Where(slot => slot.GetItem() == materialInfo.Material)
-                    .Sum(slot => slot.GetQuantity()) < materialInfo.Amount); //IA 2 LINQ - Parcial 1
+                    .Sum(slot => slot.GetQuantity()) < materialInfo.Amount);
         }
-        else
-        {
-            return true;
-        }
+        else return true;
     }
 }

@@ -97,7 +97,7 @@ public class MerchantSystem : MonoBehaviour
         if (recipeIndex >= 0 && recipeIndex < recipes.Count)
         {
             Slots recipe = recipes[recipeIndex];
-            if(recipeIndex !=4) CraftRecipeClicked(recipe);
+            if(recipeIndex != 4) CraftRecipeClicked(recipe);
             else if(recipeIndex == 4) RepairWeaponClicked(recipe);
         }
     }
