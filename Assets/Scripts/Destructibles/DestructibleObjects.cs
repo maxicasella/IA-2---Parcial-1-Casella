@@ -5,6 +5,8 @@ using UnityEngine;
 public class DestructibleObjects : MonoBehaviour,IDamageable
 {
     [SerializeField] Miscellaneous _resource;
+    [SerializeField] GameObject _hitParticles;
+    [SerializeField] AudioSource _audio;
     [SerializeField] float _maxLife;
     float _life;
 
@@ -21,6 +23,8 @@ public class DestructibleObjects : MonoBehaviour,IDamageable
     {
         if(other.gameObject.layer == 7)
         {
+            Instantiate(_hitParticles, transform);
+            _audio.Play();
             var collision = other.gameObject.GetComponent<BaseWeapon>();
             collision.Durability(0.5f);
             AddResources();

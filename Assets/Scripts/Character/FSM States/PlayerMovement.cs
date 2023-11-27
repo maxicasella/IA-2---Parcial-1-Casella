@@ -2,31 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : IState
+public class PlayerMovement : IState_Character
 {
-    FSM _fsm;
+    FSM_Character _fsm;
     CharacterController _character;
     Animator _myAnim;
     bool _isMoving;
 
-    public PlayerMovement(FSM fsm, CharacterController character, Animator myAnim)
+    public PlayerMovement(FSM_Character fsm, CharacterController character, Animator myAnim)
     {
         _fsm = fsm;
         _character = character;
         _myAnim = myAnim;
     }
-    void IState.OnEnter()
+    void IState_Character.OnEnter()
     {
         _character.move = true;
         Move(_character.xInput, _character.yInput);
         _myAnim.SetBool("Run", true);
     }
-    void IState.OnUpdate()
+    void IState_Character.OnUpdate()
     {
         if (_isMoving) Move(_character.xInput, _character.yInput);
         else _fsm.UpdateStates(States.Idle);
     }
-    void IState.OnExit()
+    void IState_Character.OnExit()
     {
         _character.move = false;
         _myAnim.SetBool("Run", false);

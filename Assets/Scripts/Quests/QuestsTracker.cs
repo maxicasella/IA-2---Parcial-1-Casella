@@ -28,7 +28,6 @@ public class QuestsTracker : MonoBehaviour
             _questChecked = true;
             CheckQuest();
         }
-
     }
     public void OnQuestCompleted(RandomQuest quest)
     {
@@ -58,14 +57,15 @@ public class QuestsTracker : MonoBehaviour
 
         if (questRequirements == null || valueRequirements == null) return true;
 
-        var requirementPairs = questRequirements.Zip(valueRequirements, (item, value) => new { Item = item, Value = value }); //IA 2 LINQ - Parcial 1
+        bool requirementsOk = questRequirements
+            .Zip(valueRequirements, (item, value) => new { Item = item, Value = value }) // IA 2 LINQ - Parcial 1
+             .Aggregate(true, (result, pair) =>
+            {
+                int quantity = InventoryManager.InventoryInstance.GetItemQuantity(pair.Item);
+                return result && (quantity >= pair.Value);
+            }); //IA2-P1
 
-        foreach (var pair in requirementPairs)
-        {
-            int quantity = InventoryManager.InventoryInstance.GetItemQuantity(pair.Item);
-            if (quantity < pair.Value) return false;
-        }
-        return true;
+        return requirementsOk;
     }
 
     void CheckQuest()

@@ -21,17 +21,17 @@ public class Tools : Items
         Legendary
     }
 
-    [SerializeField] protected float _baseDamage;
-    [SerializeField] protected float _criticalDamage;
+    [SerializeField] protected int _baseDamage;
+    [SerializeField] protected int _criticalDamage;
 
     public float _maxDurability;
     public float _actualDurability;
 
     //Getters
-    public float NormalDamage { get { return _baseDamage; } }
+    public int NormalDamage { get { return _baseDamage; } }
     public float Durability { get { return _actualDurability; } set { _actualDurability -= value; } }
     public float RepairWeapon { set { _actualDurability += value; } }
-    public float CriticalDamage { get { return _criticalDamage; } }
+    public int CriticalDamage { get { return _criticalDamage; } }
 
     void Awake()
     {

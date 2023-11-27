@@ -151,9 +151,19 @@ public class InventoryManager : MonoBehaviour
 
     public void OrderListDescending()
     {
-        _originalItems = items.ToList(); //IA 2 LINQ - Parcial 1
-
-        items = items.OrderByDescending(slot => slot.GetQuantity()).ToList(); //IA 2 LINQ - Parcial 1
+        items = items.Aggregate(new List<Slots>(), (sortedList, nextItem) =>
+        {
+            int index = sortedList.FindIndex(slot => slot.GetQuantity() <= nextItem.GetQuantity());
+            if (index == -1)
+            {
+                sortedList.Add(nextItem);
+            }
+            else
+            {
+                sortedList.Insert(index, nextItem);
+            }
+            return sortedList;
+        }); //IA2-P1
 
         RefreshUI();
     }
@@ -166,12 +176,11 @@ public class InventoryManager : MonoBehaviour
     }
     public int GetItemQuantity(Items item)
     {
-        int quantity = 0;
-        foreach (Slots slot in items)
-        {
-            if (slot.GetItem() == item) quantity += slot.GetQuantity();
-        }
-        return quantity;
+        int totalQuantity = items
+       .Where(slot => slot.GetItem() == item) //IA 2 LINQ - Parcial 1
+       .Aggregate(0, (acc, slot) => acc + slot.GetQuantity());//IA2-P1
+
+        return totalQuantity;
     }
     public bool HasItem(Items item, int quantity)
     {

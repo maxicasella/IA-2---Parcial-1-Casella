@@ -54,10 +54,17 @@ public class Slots
     }
     public bool HasMaterialsForRecipe(Slots recipe, List<Slots> originalItems)
     {
-        return !recipe.materialsRequirement
-         .Select((material, index) => new { Material = material, Amount = recipe.valueMaterialsRequirement[index] })
-         .Any(materialInfo => originalItems
-             .Where(slot => slot.GetItem() == materialInfo.Material)
-             .Sum(slot => slot.GetQuantity()) < materialInfo.Amount); //IA 2 LINQ - Parcial 1
+        bool hasMaterials = !recipe.materialsRequirement
+      .Select((material, index) => new { Material = material, Amount = recipe.valueMaterialsRequirement[index] }) //IA 2 LINQ - Parcial 1
+      .Aggregate(true, (result, materialInfo) =>
+      {
+          int totalQuantity = originalItems
+              .Where(slot => slot.GetItem() == materialInfo.Material)
+              .Sum(slot => slot.GetQuantity());
+
+          return result && totalQuantity >= materialInfo.Amount;
+      }); //IA2-P1
+
+        return hasMaterials;
     }
 }

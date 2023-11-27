@@ -5,10 +5,10 @@ using UnityEngine;
 public class BaseWeapon : MonoBehaviour
 {
     [SerializeField] Entity _myEntity;
-    float _normalDmg;
-    float _critcalDmg;
-    public float NormalDamage { get { return _normalDmg; } }
-    public float CriticalDamage { get { return _critcalDmg; } }
+    int _normalDmg;
+    int _critcalDmg;
+    public int NormalDamage { get { return _normalDmg; } }
+    public int CriticalDamage { get { return _critcalDmg; } }
 
     void Start()
     {
