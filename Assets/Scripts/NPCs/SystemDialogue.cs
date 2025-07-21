@@ -13,6 +13,11 @@ public class SystemDialogue : MonoBehaviour
     Texts _texts;
     NPCInteraction _npc;
     Image _img;
+    Coroutine _typingCoroutine;
+    bool _textFullyShown = false;
+    bool _isTyping = false;
+    bool _dialogueActive = false;
+    string _currentText;
 
     void Start()
     {
@@ -37,21 +42,46 @@ public class SystemDialogue : MonoBehaviour
         {
             _dialoguesQueue.Enqueue(textToSave);
         }
+        _dialogueActive = true;
+        StartCoroutine(InitialDelay());
+    }
+    IEnumerator InitialDelay()
+    {
+        yield return new WaitForEndOfFrame(); // <- evita conflicto con el mismo clic
+        yield return new WaitForSeconds(0.1f); // <- da tiempo a soltar el mouse
         NextText();
+    }
+    public void OnClickNext() 
+    {
+        if (_dialogueActive) return;
+        if (_isTyping)
+        {
+            if (_typingCoroutine != null) StopCoroutine(_typingCoroutine);
+
+            _txtScreen.text = _currentText;
+            _isTyping = false;
+            _textFullyShown = true;
+        }
+        else if (_textFullyShown) NextText();
     }
     public void NextText()
     {
         if (_dialoguesQueue.Count == 0)
         {
+            _dialogueActive = false;
             Destroy(_npc);
             Destroy(_img);
             ImageOff();
             _npc = null;
             return;
         }
-        string actualText = _dialoguesQueue.Dequeue();
-        _txtScreen.text = actualText;
-        StartCoroutine(PrintText(actualText)); //IA 2 - Parcial 1
+        
+        _currentText = _dialoguesQueue.Dequeue();
+        
+        if (_typingCoroutine != null) StopCoroutine(_typingCoroutine);
+
+        _textFullyShown = false;
+        _typingCoroutine = StartCoroutine(PrintText(_currentText));
     }
     void ImageOff()
     {
@@ -59,12 +89,17 @@ public class SystemDialogue : MonoBehaviour
     }
     IEnumerator PrintText(string text) //IA 2 - Parcial 1
     {
+        _isTyping = true;
+        _textFullyShown = false;
         _txtScreen.text = "";
         foreach (char chars in text.ToCharArray())
         {
             _txtScreen.text += chars;
             yield return new WaitForSeconds(0.02f);
         }
+        _isTyping = false;
+        _textFullyShown = true;
+        _dialogueActive = false;
     }
 
     public void EnableCharacter()

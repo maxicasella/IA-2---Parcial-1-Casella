@@ -7,10 +7,17 @@ public class NPCInteraction : MonoBehaviour
 {
     public Texts texts;
     [SerializeField] Image _img;
+    bool _dialogueStarted = false;
 
     void OnMouseDown()
     {
-        FindObjectOfType<SystemDialogue>().ImageOn(texts);
-        FindObjectOfType<SystemDialogue>().NPCs(this, _img);
+        if (_dialogueStarted) return;
+
+        _dialogueStarted = true;
+        var dialogue = FindObjectOfType<SystemDialogue>();
+        dialogue.ImageOn(texts);
+        dialogue.NPCs(this, _img);
+        dialogue.TextOn();
     }
+
 }
