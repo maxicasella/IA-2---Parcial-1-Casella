@@ -44,9 +44,9 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
             return Transitions["OnEnemyDeath"];
         }
 
-       if(!_isAttack && Transitions.ContainsKey("OnEnemyIdle"))
+       if(!_isAttack && Transitions.ContainsKey("OnEnemyPatrol"))
         {
-            return Transitions["OnEnemyIdle"];
+            return Transitions["OnEnemyPatrol"];
         }
 
         return this;
