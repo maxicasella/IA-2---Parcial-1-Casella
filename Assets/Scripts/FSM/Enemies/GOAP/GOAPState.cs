@@ -3,63 +3,59 @@ using System.Linq;
 
 public class GOAPState
 {
-    public Dictionary<string, bool> values = new Dictionary<string, bool>();
+    public WorldModel worldModel;
     public GOAPAction generatingAction = null;
     public int step = 0;
 
     #region CONSTRUCTOR
-    public GOAPState(GOAPAction gen = null)
+    public GOAPState(WorldModel model, GOAPAction gen = null)
     {
+        worldModel = model;
         generatingAction = gen;
+        this.step = 0;
     }
 
     public GOAPState(GOAPState source, GOAPAction gen = null)
     {
-        foreach (var elem in source.values)
-        {
-            if (values.ContainsKey(elem.Key))
-                values[elem.Key] = elem.Value;
-            else
-                values.Add(elem.Key, elem.Value);
-        }
-        generatingAction = gen;
+        //foreach (var elem in source.values)
+        //{
+        //    if (values.ContainsKey(elem.Key))
+        //        values[elem.Key] = elem.Value;
+        //    else
+        //        values.Add(elem.Key, elem.Value);
+        //}
+        //generatingAction = gen;
+        this.worldModel = source.worldModel.Clone();
+        this.generatingAction = gen;
+        this.step = source.step;
     }
     #endregion
 
-    public override bool Equals(object obj)
-    {
-        var other = obj as GOAPState;
-        var result =
-            other != null
-            && other.generatingAction == generatingAction       //Very important to keep! TODO: REVIEW
-            && other.values.Count == values.Count
-            && other.values.All(kv => kv.In(values));
-        //&& other.values.All(kv => values.Contains(kv));
-        return result;
-    }
+    public override bool Equals(object obj) =>
+    obj is GOAPState other &&
+    new[] {
+            worldModel.life == other.worldModel.life,
+            worldModel.alive == other.worldModel.alive,
+            worldModel.weapon == other.worldModel.weapon,
+            worldModel.arrows == other.worldModel.arrows,
+            worldModel.distanceToPlayer == other.worldModel.distanceToPlayer
+    }.All(b => b);
+    public override int GetHashCode() =>
+    new[] {
+        worldModel.life.GetHashCode(),
+        worldModel.alive.GetHashCode(),
+        worldModel.weapon.GetHashCode(),
+        worldModel.arrows.GetHashCode(),
+        worldModel.distanceToPlayer.GetHashCode()
+    }.Aggregate(17, (acc, h) => acc * 31 + h);
 
-    public override int GetHashCode()
-    {
-        //Better hashing but slow.
-        //var x = 31;
-        //var hashCode = 0;
-        //foreach(var kv in values) {
-        //	hashCode += x*(kv.Key + ":" + kv.Value).GetHashCode);
-        //	x*=31;
-        //}
-        //return hashCode;
+    public override string ToString() =>
+    new[] {
+        $"Alive: {worldModel.alive}",
+        $"Life: {worldModel.life}",
+        $"Weapon: {worldModel.weapon}",
+        $"Arrows: {worldModel.arrows}",
+        $"DistanceToPlayer: {worldModel.distanceToPlayer}"
+    }.Aggregate($"---> {generatingAction?.name ?? "NULL"}\n", (acc, line) => acc + line + "\n");
 
-        //Heuristic count+first value hash multiplied by polynomial primes
-        return values.Count == 0 ? 0 : 31 * values.Count + 31 * 31 * values.First().GetHashCode();
-    }
-
-    public override string ToString()
-    {
-        var str = "";
-        foreach (var kv in values.OrderBy(x => x.Key))
-        {
-            str += $"{kv.Key:12} : {kv.Value}\n";
-        }
-        return "--->" + (generatingAction != null ? generatingAction.name : "NULL") + "\n" + str;
-    }
 }

@@ -67,25 +67,37 @@ public class GoapPlanner
     {
         OnCantPlan?.Invoke();
     }
-
-    private static float GetHeuristic(GOAPState from, GOAPState goal) => goal.values.Count(kv => !kv.In(from.values));
-    private static bool Satisfies(GOAPState state, GOAPState to) => to.values.All(kv => kv.In(state.values));
-
-    private static IEnumerable<WeightedNode<GOAPState>> Explode(GOAPState node, IEnumerable<GOAPAction> actions,
-                                                                ref int watchdog)
+    private static bool Satisfies(GOAPState current, GOAPState goal)
     {
-        if (watchdog == 0) return Enumerable.Empty<WeightedNode<GOAPState>>();
-        watchdog--;
+        return goal.generatingAction?.preconditions
+                   .Values.All(cond => cond(current.worldModel)) ?? false;
+    }
 
-        return actions.Where(action => action.preconditions.All(kv => kv.In(node.values)))
-                      .Aggregate(new List<WeightedNode<GOAPState>>(), (possibleList, action) => {
-                          var newState = new GOAPState(node);
-                          newState.values.UpdateWith(action.effects);
-                          newState.generatingAction = action;
-                          newState.step = node.step + 1;
+    private static float GetHeuristic(GOAPState from, GOAPState goal)
+    {
+        return goal.generatingAction?.preconditions
+                   .Count(cond => !cond.Value(from.worldModel)) ?? float.MaxValue;
+    }
 
-                          possibleList.Add(new WeightedNode<GOAPState>(newState, action.cost));
-                          return possibleList;
-                      });
+    private static IEnumerable<WeightedNode<GOAPState>> Explode(
+    GOAPState node,
+    IEnumerable<GOAPAction> actions,
+    ref int watchdog)
+    {
+        if (watchdog-- <= 0)
+            return Enumerable.Empty<WeightedNode<GOAPState>>();
+
+        return actions
+            .Where(action => action.preconditions.Values.All(cond => cond(node.worldModel)))
+            .Select(action =>
+            {
+                var newModel = node.worldModel.Clone();
+                action.effects.Values.ToList().ForEach(effect => effect(newModel));
+
+                return new WeightedNode<GOAPState>(
+                    new GOAPState(newModel, action) { step = node.step + 1 },
+                    action.cost
+                );
+            });
     }
 }

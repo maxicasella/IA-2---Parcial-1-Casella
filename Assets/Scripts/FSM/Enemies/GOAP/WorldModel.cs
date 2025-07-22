@@ -20,10 +20,13 @@ public class WorldModel
     //Armas - distancias y daños
     public string weapon;
     public int arrows;
+    public int maxArrows;
     public float rangeAttackDistance;
     public float meleeAttackDistance;
     public float meleeKnifeDamage;
     public float meleeKickDamage;
+    public float distanceToArrows;
+    public float distanceToKnife;
 
     //Distancia jugador
     public float distanceToPlayer;
@@ -36,10 +39,13 @@ public class WorldModel
             alive = this.alive,
             weapon = this.weapon,
             arrows = this.arrows,
+            maxArrows = this.maxArrows,
             rangeAttackDistance = this.rangeAttackDistance,
             meleeAttackDistance = this.meleeAttackDistance,
             meleeKickDamage = this.meleeKickDamage,
             meleeKnifeDamage = this.meleeKnifeDamage,
+            distanceToArrows = this.distanceToArrows,
+            distanceToKnife = this.distanceToKnife,
             distanceToPlayer = this.distanceToPlayer
         };
     }

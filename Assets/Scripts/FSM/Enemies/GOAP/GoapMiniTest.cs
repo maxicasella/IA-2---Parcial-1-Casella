@@ -13,49 +13,51 @@ public class GoapMiniTest : MonoBehaviour {
     
     
     void Start() {
-        //OnlyPlan();
-        PlanAndExecute();
+        OnlyPlan();
+        //PlanAndExecute();
     }
 
-    private void OnlyPlan() {
+    private void OnlyPlan() 
+    {
+
     }
 
-    private void PlanAndExecute() {
-        var actions = new List<GOAPAction>{
-                                              new GOAPAction("Patrol")
-                                                 .Effect("isPlayerInSight", true)
-                                                 .LinkedState(patrolState),
+    //private void PlanAndExecute() {
+    //    var actions = new List<GOAPAction>{
+    //                                          new GOAPAction("Patrol")
+    //                                             .Effect("isPlayerInSight", true)
+    //                                             .LinkedState(patrolState),
 
-                                              new GOAPAction("Idle")
-                                                 .Pre("isPlayerInSight", true)
-                                                 .Effect("isPlayerNear",    true)
-                                                 .LinkedState(idleState),
+    //                                          new GOAPAction("Idle")
+    //                                             .Pre("isPlayerInSight", true)
+    //                                             .Effect("isPlayerNear",    true)
+    //                                             .LinkedState(idleState),
 
-                                              new GOAPAction("Death")
-                                                 .Pre("isPlayerNear",   true)
-                                                 .Effect("isPlayerAlive", false)
-                                                 .LinkedState(deathState),
+    //                                          new GOAPAction("Death")
+    //                                             .Pre("isPlayerNear",   true)
+    //                                             .Effect("isPlayerAlive", false)
+    //                                             .LinkedState(deathState),
 
-                                              new GOAPAction("Range Attack")
-                                                 .Pre("isPlayerNear",   true)
-                                                 .Effect("isPlayerAlive", false)
-                                                 .LinkedState(rangeAttack)
-                                          };
+    //                                          new GOAPAction("Range Attack")
+    //                                             .Pre("isPlayerNear",   true)
+    //                                             .Effect("isPlayerAlive", false)
+    //                                             .LinkedState(rangeAttack)
+    //                                      };
         
-        var from = new GOAPState();
-        from.values["isPlayerInSight"] = false;
-        from.values["isPlayerNear"]    = false;
-        from.values["isPlayerAlive"]   = true;
+    //    var from = new GOAPState();
+    //    from.values["isPlayerInSight"] = false;
+    //    from.values["isPlayerNear"]    = false;
+    //    from.values["isPlayerAlive"]   = true;
 
-        var to = new GOAPState();
-        to.values["isPlayerAlive"] = false;
+    //    var to = new GOAPState();
+    //    to.values["isPlayerAlive"] = false;
 
-        var planner = new GoapPlanner();
-        planner.OnPlanCompleted += OnPlanCompleted;
-        planner.OnCantPlan      += OnCantPlan;
+    //    var planner = new GoapPlanner();
+    //    planner.OnPlanCompleted += OnPlanCompleted;
+    //    planner.OnCantPlan      += OnCantPlan;
 
-        planner.Run(from, to, actions, StartCoroutine);
-    }
+    //    planner.Run(from, to, actions, StartCoroutine);
+    //}
 
 
     private void OnPlanCompleted(IEnumerable<GOAPAction> plan) {
