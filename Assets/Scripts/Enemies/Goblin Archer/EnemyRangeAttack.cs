@@ -24,7 +24,7 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     float _nextShootTime;
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
-        _myAnim.SetBool("Attack", true);
+        _myAnim.SetBool("Range Attack", true);
 
         base.Enter(from, transitionParameters);
     }
@@ -34,7 +34,7 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     }
     public override Dictionary<string, object> Exit(IState to)
     {
-        _myAnim.SetBool("Attack", false);
+        _myAnim.SetBool("Range Attack", false);
         return base.Exit(to);
     }
     public override IState ProcessInput()
@@ -59,13 +59,13 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
         if (target == null)
         {
             _isAttack = false;
-            _myAnim.SetBool("Attack", false);
+            _myAnim.SetBool("Range Attack", false);
             return;
         }
         else
         {
             _isAttack = true;
-            _myAnim.SetBool("Attack", true);
+            _myAnim.SetBool("Range Attack", true);
 
             Vector3 targetDir = target.Position - transform.position;
             Quaternion targetRotation = Quaternion.LookRotation(targetDir);

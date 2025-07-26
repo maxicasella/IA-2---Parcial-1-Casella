@@ -22,6 +22,7 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     [SerializeField] float _movementSpeed;
     [SerializeField] float _rotationSpeed;
 
+    AStar<Node> _astar;
     bool _calculatePath = false;
     bool _isPatrol;
     bool _toAttack;
@@ -30,7 +31,10 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
         _isPatrol = true;
-        _myAnim.SetBool("Walk", true);
+        //_myAnim.SetBool("Walk", true);
+        _astar = new AStar<Node>();
+        _astar.OnPathCompleted += PathCompleted;
+        _astar.OnCantCalculate += PathCantCompleted;
         base.Enter(from, transitionParameters);
     }
     public override void UpdateLoop()
@@ -43,6 +47,13 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     {
         StopPatrol();
         _myAnim.SetBool("Walk", false);
+
+        if (_astar != null)
+        {
+            _astar.OnPathCompleted -= PathCompleted;
+            _astar.OnCantCalculate -= PathCantCompleted;
+        }
+
         return base.Exit(to);
     }
     public override IState ProcessInput()
@@ -67,10 +78,21 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
 
     public void PatrolLogic()
     {
+        //if (_isPatrol && !_calculatePath)
+        //{
+        //    StartCoroutine(AStar.CalculatePath(start, x => x == end, x => x.neighbours.Select(x => new WeightedNode<Node>(x, 1)),
+        //                        x => x.heuristic, PathCompleted, PathCantCompleted));
+        //}
         if (_isPatrol && !_calculatePath)
         {
-            StartCoroutine(AStar.CalculatePath(start, x => x == end, x => x.neighbours.Select(x => new WeightedNode<Node>(x, 1)),
-                                x => x.heuristic, PathCompleted, PathCantCompleted));
+            _calculatePath = true;
+
+            StartCoroutine(_astar.Run(
+                start,
+                x => x == end,
+                x => x.neighbours.Select(n => new WeightedNode<Node>(n, 1)),
+                x => x.heuristic
+            ));
         }
     }
     public void StopPatrol()
@@ -86,9 +108,23 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
         _isPatrol = true; 
     }
 
+    //void PathCompleted(IEnumerable<Node> newPath)
+    //{
+    //    _calculatePath = true;
+    //    path = new List<Node>(newPath);
+
+    //    if (path.Count > 0)
+    //    {
+    //        _myAnim.SetBool("Walk", true);
+    //        StartCoroutine(FollowPath());
+    //    }
+    //    else
+    //    {
+    //        PathCantCompleted();
+    //    }
+    //}
     void PathCompleted(IEnumerable<Node> newPath)
     {
-        _calculatePath = true;
         path = new List<Node>(newPath);
 
         if (path.Count > 0)
