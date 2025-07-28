@@ -20,6 +20,11 @@ public class EnemyController : MonoBehaviour //IA2-P3
     [SerializeField] EnemyRangeAttack _rangeAttack;
     [SerializeField] EnemyDeath _death;
     [SerializeField] EnemyIdle _idle;
+    [SerializeField] EnemyMeleeKickAttack _meleeKickAttack;
+    [SerializeField] EnemyMeleeKnifeAttack _meleeKnifeAttack;
+    [SerializeField] EnemyPickArrows _pickArrows;
+    [SerializeField] EnemyPickKnife _pickKnife;
+    [SerializeField] EnemyRecoveryLife _recoveryLife;
 
     FiniteStateMachine _fsm;
 

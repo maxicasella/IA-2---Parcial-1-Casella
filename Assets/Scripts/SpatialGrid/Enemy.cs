@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour, IGridEntity
     public int damage;
 
     public int CurrentLife { get { return hp; } }
+    public int MaxLife { get { return _maxHp; } }
     
     public Vector3 Position {
         get => transform.position;
@@ -43,5 +44,10 @@ public class Enemy : MonoBehaviour, IGridEntity
             _spatialGrid.Remove(this);
             Destroy(this.gameObject);
         }
+    }
+
+    public void RecoveryLife(int value)
+    {
+        hp += value;
     }
 }
