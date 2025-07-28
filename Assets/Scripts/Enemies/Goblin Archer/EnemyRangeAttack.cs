@@ -14,16 +14,18 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     [SerializeField] Transform _shootPosition;
     [SerializeField] Animator _myAnim;
 
-
-
     [Header("Values")]
     [SerializeField] float _rotationSpeed;
     [SerializeField] float _shootCooldown;
+    public int maxArrows;
+    int _actualArrows;
 
+    public int ActualArrows { get { return _actualArrows; } }
     bool _isAttack = false;
     float _nextShootTime;
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
+        _actualArrows = maxArrows;
         _myAnim.SetBool("Range Attack", true);
 
         base.Enter(from, transitionParameters);
@@ -45,9 +47,9 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
         }
 
        if(!_isAttack && Transitions.ContainsKey("OnEnemyPatrol"))
-        {
+       {
             return Transitions["OnEnemyPatrol"];
-        }
+       }
 
         return this;
     }
@@ -64,18 +66,18 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
         }
         else
         {
-            _isAttack = true;
-            _myAnim.SetBool("Range Attack", true);
-
             Vector3 targetDir = target.Position - transform.position;
             Quaternion targetRotation = Quaternion.LookRotation(targetDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
 
             _myQuery.targetGrid.UpdateEntity(_myEnemy);
 
-            if (Time.time >= _nextShootTime)
+            if (Time.time >= _nextShootTime && _actualArrows > 0)
             {
+                _isAttack = true;
+                _myAnim.SetBool("Range Attack", true);
                 Shoot();
+                _actualArrows--;
                 _nextShootTime = Time.time + _shootCooldown;
             }
         }
@@ -83,5 +85,9 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     void Shoot()
     {
         Instantiate(_arrowPrefab, _shootPosition.position,_shootPosition.rotation);
+    }
+    public void PickArrows()
+    {
+        _actualArrows = maxArrows;
     }
 }

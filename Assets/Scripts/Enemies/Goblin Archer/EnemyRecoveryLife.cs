@@ -10,6 +10,7 @@ public class EnemyRecoveryLife : MonoBaseState
     [Header("Nodes")]
     [SerializeField] Node start;
     [SerializeField] Node end;
+    Node _safeEndNode;
     [SerializeField] SpatialGrid _spatialGrid;
 
     [Header("Components")]
@@ -22,6 +23,7 @@ public class EnemyRecoveryLife : MonoBaseState
     [Header("Values")]
     [SerializeField] float _movementSpeed;
     [SerializeField] float _rotationSpeed;
+    [SerializeField] float _minRecoveryDistance;
     [SerializeField] int _recoveryValue;
 
     AStar<Node> _astar;
@@ -33,6 +35,10 @@ public class EnemyRecoveryLife : MonoBaseState
     {
         _isRecovery = true;
         _astar = new AStar<Node>();
+        _safeEndNode = FindSafeNode();
+
+        if (_safeEndNode != null) end = _safeEndNode;
+
         _astar.OnPathCompleted += PathCompleted;
         _astar.OnCantCalculate += PathCantCompleted;
         base.Enter(from, transitionParameters);
@@ -58,6 +64,22 @@ public class EnemyRecoveryLife : MonoBaseState
             return Transitions["OnEnemyIdle"];
         }
         return this;
+    }
+    Node FindSafeNode()
+    {
+        var allNodes = FindObjectsOfType<Node>();
+        Vector3 pos = transform.position;
+
+        var nodes = allNodes
+            .Where(n => n.neighbours != null && n.neighbours.Length > 0)
+            .Where(n => Vector3.Distance(pos, n.transform.position) >= _minRecoveryDistance)
+            .OrderByDescending(n => Vector3.Distance(pos, n.transform.position)) 
+            .ToList();
+
+        if (allNodes.Any()) return nodes.First(); 
+
+        Debug.Log("No se encontro un nodo seguro lejano.");
+        return null;
     }
     void PathCompleted(IEnumerable<Node> newPath)
     {
@@ -118,16 +140,17 @@ public class EnemyRecoveryLife : MonoBaseState
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * _movementSpeed);
                 _spatialGrid.UpdateEntity(_myEnemy);
 
-                if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
-                {
-                    StartCoroutine(ExecuteRecovery());
-                    yield break;
-                }
+                //if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
+                //{
+                //    StartCoroutine(ExecuteRecovery());
+                //    yield break;
+                //}
                 yield return null;
             }
             transform.position = targetPosition;
             if (node == end)
             {
+                StartCoroutine(ExecuteRecovery());
                 _isGoalNode = true;
                 yield break;
             }
