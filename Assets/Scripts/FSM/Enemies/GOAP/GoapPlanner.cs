@@ -80,9 +80,9 @@ public class GoapPlanner
     }
 
     private static IEnumerable<WeightedNode<GOAPState>> Explode(
-    GOAPState node,
-    IEnumerable<GOAPAction> actions,
-    ref int watchdog)
+        GOAPState node,
+        IEnumerable<GOAPAction> actions,
+        ref int watchdog)
     {
         if (watchdog-- <= 0)
             return Enumerable.Empty<WeightedNode<GOAPState>>();
@@ -92,12 +92,18 @@ public class GoapPlanner
             .Select(action =>
             {
                 var newModel = node.worldModel.Clone();
-                action.effects.Values.ToList().ForEach(effect => effect(newModel));
+                foreach (var effect in action.effects.Values)
+                {
+                    effect(newModel);
+                }
+
+                float actionCost = action.cost(newModel);
 
                 return new WeightedNode<GOAPState>(
                     new GOAPState(newModel, action) { step = node.step + 1 },
-                    action.cost
+                    actionCost
                 );
             });
     }
+
 }

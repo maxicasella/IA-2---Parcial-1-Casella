@@ -82,7 +82,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
     }
     void GOAPPlan()
     {
-        //Distancis player y armas
+        //Distancias player y armas
         var target = _myQuery.Query()
                              .OfType<CharacterController>()
                              .OrderBy(x => Vector3.Distance(transform.position, x.Position))
@@ -125,6 +125,54 @@ public class EnemyController : MonoBehaviour //IA2-P3
         var actions = new List<GOAPAction>
         {
             //Incluir todas las acciones con efectos, precondiciones, costos y estados linkeados    
+            new GOAPAction("Patrol")
+                .Effect("isPlayerInRange", wm =>
+                { wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.rangeAttackDistance - 0.1f);
+                })
+                .Effect("isPlayerNear", wm =>
+                { wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.meleeAttackDistance - 0.1f);
+                })
+                .Cost(_ => 1f)
+                .LinkedState(_patrol),
+
+            new GOAPAction("Range Attack")
+                .Pre("isPlayerInRange", wm => wm.distanceToPlayer <= wm.rangeAttackDistance)
+                .Pre("hasArrows", wm => wm.arrows > 0)
+                .Effect("isPlayerAlive", wm => wm.alive = false)
+                .Cost(wm => 1f + (1f / (wm.arrows > 0 ? wm.rangeAttackDistance : 1f)))
+                .LinkedState(_rangeAttack),
+
+            new GOAPAction("Knife Melee Attack")
+                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
+                .Pre("hasKnife", wm => wm.weapon == "Knife")
+                .Effect("isPlayerAlive", wm => wm.alive = false)
+                .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKnifeDamage)))
+                .LinkedState(_meleeKnifeAttack),
+
+            new GOAPAction("Kick Melee Attack")
+                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
+                .Pre("noKnife", wm => wm.weapon != "Knife")
+                .Effect("isPlayerAlive", wm => wm.alive = false)
+                .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKickDamage)))
+                .LinkedState(_meleeKickAttack),
+
+            new GOAPAction("Pick Arrows")
+                .Pre("noArrows", wm => wm.arrows <= 0)
+                .Effect("hasArrows", wm => wm.arrows = wm.maxArrows)
+                .Cost(wm => 1f + wm.distanceToArrows)
+                .LinkedState(_pickArrows),
+
+            new GOAPAction("Pick Knife")
+                .Pre("noKnife", wm => wm.weapon != "Knife")
+                .Effect("hasKnife", wm => wm.weapon = "Knife")
+                .Cost(wm => 1f + wm.distanceToKnife)
+                .LinkedState(_pickKnife),
+
+            new GOAPAction("Recover Life")
+                .Pre("lowHP", wm => wm.life <= (0.25f * wm.maxLife))
+                .Effect("recoverHP", wm => wm.life = Mathf.Min(wm.maxLife, wm.life + (0.5f * wm.maxLife)))
+                .Cost(_ => 1f)
+                .LinkedState(_recoveryLife)
         };
 
         var planner = new GoapPlanner();
