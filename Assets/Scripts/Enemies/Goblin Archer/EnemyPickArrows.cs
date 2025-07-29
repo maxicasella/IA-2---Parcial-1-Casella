@@ -16,7 +16,7 @@ public class EnemyPickArrows : MonoBaseState
     [Header("Components")]
     [SerializeField] Enemy _myEnemy;
     [SerializeField] SquareQuery _myQuery = null;
-    [SerializeField] Transform _arrowsPosition;
+    public Transform arrowsPosition;
     [SerializeField] Animator _myAnim;
     [SerializeField] ParticleSystem _particles;
     [SerializeField] EnemyRangeAttack _rangeAttackState;
@@ -65,7 +65,7 @@ public class EnemyPickArrows : MonoBaseState
     }
     Node FindArrowsNode()
     {
-        Vector3 arrowPos = _arrowsPosition.position;
+        Vector3 arrowPos = arrowsPosition.position;
 
         return FindObjectsOfType<Node>()
             .Where(n => n.neighbours != null && n.neighbours.Length > 0)

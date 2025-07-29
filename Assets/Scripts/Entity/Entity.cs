@@ -33,9 +33,12 @@ public class Entity : MonoBehaviour, IDamageable
 
     public float MaxLife { get { return _maxLife; } }
     public float Stamina { get { return _currentStamina; } }
+    public bool Alive { get { return _alive; } }
+    bool _alive;
 
     void Awake()
     {
+        _alive = true;
         _currentLife = _maxLife;
         _currentStamina = _maxStamina;
     }
@@ -50,6 +53,7 @@ public class Entity : MonoBehaviour, IDamageable
     {
         _currentLife -= value;
         Instantiate(_dmgParticles, _particlesPoint.transform);
+        if (_currentLife <= 0) _alive = false;
         GameManager.Instance.GameOver();
     }
 
