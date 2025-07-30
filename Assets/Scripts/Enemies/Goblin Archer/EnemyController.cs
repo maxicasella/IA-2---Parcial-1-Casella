@@ -38,8 +38,8 @@ public class EnemyController : MonoBehaviour //IA2-P3
     [SerializeField] float _rangeDistance;
 
     [Header("Damages")]
-    [SerializeField] float _kickDamage;
-    [SerializeField] float _knifeDamage;
+    [SerializeField] int _kickDamage;
+    [SerializeField] int _knifeDamage;
 
     [Header("Distances to Objects")]
     float _distanceToPlayer;
@@ -48,8 +48,8 @@ public class EnemyController : MonoBehaviour //IA2-P3
 
     void Start()
     {
-        _fsm = ConfigureFSM();
-        _fsm.Active = true;
+        //_fsm = ConfigureFSM();
+        //_fsm.Active = true;
     }
 
     public FiniteStateMachine ConfigureFSM()
@@ -124,7 +124,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
 
         var actions = new List<GOAPAction>
         {
-            //Incluir todas las acciones con efectos, precondiciones, costos y estados linkeados    
+            //Acciones con efectos, precondiciones, costos y estados linkeados    
             new GOAPAction("Patrol")
                 .Effect("isPlayerInRange", wm =>
                 { wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.rangeAttackDistance - 0.1f);
@@ -197,7 +197,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
     private void OnCantPlan()
     {
         //TODO: debuggeamos para ver por qué no pudo planear y encontrar como hacer para que no pase nunca mas
-        Debug.LogWarning("No se pudo generar un plan GOAP.");
+        Debug.LogWarning("No se pudo generar un plan con GOAP.");
     }
     void OnDrawGizmos()
     {

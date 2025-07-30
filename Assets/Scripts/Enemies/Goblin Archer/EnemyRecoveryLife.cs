@@ -169,4 +169,12 @@ public class EnemyRecoveryLife : MonoBaseState
 
         _isGoalNode = true;
     }
+
+    void OnDrawGizmos()
+    {
+        Vector3 pos = transform.position;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(pos, _minRecoveryDistance);
+    }
 }

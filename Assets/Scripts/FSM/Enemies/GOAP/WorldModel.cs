@@ -23,8 +23,8 @@ public class WorldModel
     public int maxArrows;
     public float rangeAttackDistance;
     public float meleeAttackDistance;
-    public float meleeKnifeDamage;
-    public float meleeKickDamage;
+    public int meleeKnifeDamage;
+    public int meleeKickDamage;
     public float distanceToArrows;
     public float distanceToKnife;
 
