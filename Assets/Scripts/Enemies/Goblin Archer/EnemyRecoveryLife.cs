@@ -57,14 +57,7 @@ public class EnemyRecoveryLife : MonoBaseState
         }
         return base.Exit(to);
     }
-    public override IState ProcessInput()
-    {
-        if (_isGoalNode && Transitions.ContainsKey("OnEnemyIdle"))
-        {
-            return Transitions["OnEnemyIdle"];
-        }
-        return this;
-    }
+
     Node FindSafeNode()
     {
         var allNodes = FindObjectsOfType<Node>();
@@ -176,5 +169,15 @@ public class EnemyRecoveryLife : MonoBaseState
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(pos, _minRecoveryDistance);
+    }
+
+    public override IState ProcessInput()
+    {
+        //if (_isGoalNode && Transitions.ContainsKey("OnEnemyIdle"))
+        //{
+        //    return Transitions["OnEnemyIdle"];
+        //}
+        //return this;
+        throw new NotImplementedException();
     }
 }

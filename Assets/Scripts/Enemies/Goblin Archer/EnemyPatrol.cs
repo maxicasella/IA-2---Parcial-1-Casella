@@ -58,22 +58,23 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     }
     public override IState ProcessInput()
     {
-        if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
-        {
-            return Transitions["OnEnemyDeath"];
-        }
+        //if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
+        //{
+        //    return Transitions["OnEnemyDeath"];
+        //}
         
-        if(_isGoalNode && Transitions.ContainsKey("OnEnemyIdle"))
-        {
-            return Transitions["OnEnemyIdle"];
-        }
+        //if(_isGoalNode && Transitions.ContainsKey("OnEnemyIdle"))
+        //{
+        //    return Transitions["OnEnemyIdle"];
+        //}
 
-        if (_toAttack && Transitions.ContainsKey("OnEnemyRangeAttack"))
-        {
-            return Transitions["OnEnemyRangeAttack"];
-        }
+        //if (_toAttack && Transitions.ContainsKey("OnEnemyRangeAttack"))
+        //{
+        //    return Transitions["OnEnemyRangeAttack"];
+        //}
 
-        return this;
+        //return this;
+        throw new NotImplementedException();
     }
 
     public void PatrolLogic()
@@ -174,6 +175,7 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
             if (node == end)
             {
                 _isGoalNode = true;
+                FinishState();
                 yield break; 
             }
             yield return new WaitForSeconds(0.1f);
@@ -186,7 +188,11 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     {
         var target = _myQuery.Query().Select(x => x as CharacterController).Where(x => x != null).FirstOrDefault();
 
-        if (target != null) return _toAttack = true;
+        if (target != null)
+        {
+            FinishState();
+            return _toAttack = true;
+        }
         else return _toAttack = false;
     }
 }

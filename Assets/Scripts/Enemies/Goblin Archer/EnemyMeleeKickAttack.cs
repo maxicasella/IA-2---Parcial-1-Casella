@@ -35,15 +35,16 @@ public class EnemyMeleeKickAttack : MonoBaseState
     }
     public override IState ProcessInput()
     {
-        if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
-        {
-            return Transitions["OnEnemyDeath"];
-        }
-        if (!_isAttack && Transitions.ContainsKey("OnEnemyPatrol"))
-        {
-            return Transitions["OnEnemyPatrol"];
-        }
-        return this;
+        //if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
+        //{
+        //    return Transitions["OnEnemyDeath"];
+        //}
+        //if (!_isAttack && Transitions.ContainsKey("OnEnemyPatrol"))
+        //{
+        //    return Transitions["OnEnemyPatrol"];
+        //}
+        //return this;
+        throw new NotImplementedException();
     }
     void AttackPlayer()
     {
@@ -65,6 +66,7 @@ public class EnemyMeleeKickAttack : MonoBaseState
         {
             _isAttack = false;
             _myAnim.SetBool("Kick Attack", false);
+            FinishState();
             return;
         }
 

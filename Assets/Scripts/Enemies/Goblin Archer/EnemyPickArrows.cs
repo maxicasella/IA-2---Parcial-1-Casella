@@ -56,12 +56,13 @@ public class EnemyPickArrows : MonoBaseState
     }
     public override IState ProcessInput()
     {
-        if(_pickArrows && Transitions.ContainsKey("OnEnemyPatroll"))
-        {
-            return Transitions["OnEnemyPatroll"];
-        }
+        //if(_pickArrows && Transitions.ContainsKey("OnEnemyPatroll"))
+        //{
+        //    return Transitions["OnEnemyPatroll"];
+        //}
 
-        return this;
+        //return this;
+        throw new NotImplementedException();
     }
     Node FindArrowsNode()
     {
@@ -165,5 +166,6 @@ public class EnemyPickArrows : MonoBaseState
         _rangeAttackState.PickArrows();
         yield return new WaitForSeconds(1f);
         _pickArrows = true;
+        FinishState();
     }
 }

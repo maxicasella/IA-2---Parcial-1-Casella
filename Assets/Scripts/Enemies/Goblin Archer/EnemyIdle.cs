@@ -30,6 +30,7 @@ public class EnemyIdle : MonoBaseState //IA2-P3
     public override void UpdateLoop()
     {
         DetectPlayer();
+        if (_counter >= _timeToExitIdle) FinishState();
     }
 
     public override Dictionary<string, object> Exit(IState to)
@@ -40,21 +41,22 @@ public class EnemyIdle : MonoBaseState //IA2-P3
     }
     public override IState ProcessInput() 
     {
-        if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
-        {
-            return Transitions["OnEnemyDeath"];
-        }
+        //if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
+        //{
+        //    return Transitions["OnEnemyDeath"];
+        //}
 
-        if (_toAttack && Transitions.ContainsKey("OnEnemyRangeAttack"))
-        {
-            return Transitions["OnEnemyRangeAttack"];
-        }
-        else if(_counter >= _timeToExitIdle && Transitions.ContainsKey("OnEnemyPatrol"))
-        {
-                return Transitions["OnEnemyPatrol"];
-        }
+        //if (_toAttack && Transitions.ContainsKey("OnEnemyRangeAttack"))
+        //{
+        //    return Transitions["OnEnemyRangeAttack"];
+        //}
+        //else if(_counter >= _timeToExitIdle && Transitions.ContainsKey("OnEnemyPatrol"))
+        //{
+        //        return Transitions["OnEnemyPatrol"];
+        //}
 
-        return this;
+        //return this;
+        throw new NotImplementedException();
     }
     bool DetectPlayer() //IA2-P2
     {

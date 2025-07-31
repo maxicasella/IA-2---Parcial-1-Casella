@@ -32,18 +32,56 @@ public class GoapPlanner
         startCoroutine(astarEnumerator);
     }
 
+    //public static FiniteStateMachine ConfigureFSM(IEnumerable<GOAPAction> plan, Func<IEnumerator, Coroutine> startCoroutine)
+    //{
+    //    var prevState = plan.First().linkedState;
+
+    //    var fsm = new FiniteStateMachine(prevState, startCoroutine);
+
+    //    foreach (var action in plan.Skip(1))
+    //    {
+    //        if (prevState == action.linkedState) continue;
+    //        fsm.AddTransition("On" + action.linkedState.Name, prevState, action.linkedState);
+
+    //        prevState = action.linkedState;
+    //    }
+
+    //    return fsm;
+    //}
+
+    //GOAP
     public static FiniteStateMachine ConfigureFSM(IEnumerable<GOAPAction> plan, Func<IEnumerator, Coroutine> startCoroutine)
     {
-        var prevState = plan.First().linkedState;
+        var actions = plan.ToList();
+        if (actions.Count == 0) return null;
 
-        var fsm = new FiniteStateMachine(prevState, startCoroutine);
+        var fsm = new FiniteStateMachine(actions[0].linkedState, startCoroutine);
 
-        foreach (var action in plan.Skip(1))
+        for (int i = 0; i < actions.Count - 1; i++)
         {
-            if (prevState == action.linkedState) continue;
-            fsm.AddTransition("On" + action.linkedState.Name, prevState, action.linkedState);
+            var currentState = actions[i].linkedState;
+            var nextState = actions[i + 1].linkedState;
 
-            prevState = action.linkedState;
+            string transitionKey = $"GoapStep{i}";
+
+            fsm.AddTransition(transitionKey, currentState, nextState);
+
+            //Callback al terminar estado
+            if (currentState is MonoBaseState monoState)
+            {
+                monoState.OnStateFinished = () =>
+                {
+                    fsm.Trigger(transitionKey);
+                };
+            }
+        }
+
+        if (actions.Last().linkedState is MonoBaseState lastState)
+        {
+            lastState.OnStateFinished = () =>
+            {
+                Debug.Log("Plan GOAP finalizado.");
+            };
         }
 
         return fsm;
@@ -87,23 +125,45 @@ public class GoapPlanner
         if (watchdog-- <= 0)
             return Enumerable.Empty<WeightedNode<GOAPState>>();
 
-        return actions
-            .Where(action => action.preconditions.Values.All(cond => cond(node.worldModel)))
-            .Select(action =>
+        if (node == null || node.worldModel == null)
+        {
+            Debug.Log("GOAPState o WorldModel es null en Explode");
+            return Enumerable.Empty<WeightedNode<GOAPState>>();
+        }
+
+        var validActions = actions
+                        .Where(action =>
+                        {
+                            if (action == null || action.preconditions == null || action.effects == null || action.cost == null)
+                            {
+                                Debug.Log("Acción mal configurada en GOAP");
+                                return false;
+                            }
+
+                            return action.preconditions.Values.All(cond => cond != null && cond(node.worldModel));
+                        });
+
+        return validActions.Select(action =>
+        {
+            var newModel = node.worldModel.Clone();
+            foreach (var effect in action.effects.Values)
             {
-                var newModel = node.worldModel.Clone();
-                foreach (var effect in action.effects.Values)
-                {
-                    effect(newModel);
-                }
+                effect?.Invoke(newModel);
+            }
 
-                float actionCost = action.cost(newModel);
+            float actionCost = action.cost != null ? action.cost(newModel) : float.MaxValue;
 
-                return new WeightedNode<GOAPState>(
-                    new GOAPState(newModel, action) { step = node.step + 1 },
-                    actionCost
-                );
-            });
+            if (newModel == null)
+            {
+                Debug.Log($"Explode: newModel es null para acción {action.name}");
+                return null; // Esto va a romper el Select si no filtrás luego
+            }
+            Debug.Log("GOAP State ok");
+            return new WeightedNode<GOAPState>(
+                new GOAPState(newModel, action) { step = node.step + 1 },
+                actionCost
+            );
+        }).Where(node => node != null);
     }
 
 }

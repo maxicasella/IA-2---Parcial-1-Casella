@@ -41,17 +41,18 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     }
     public override IState ProcessInput()
     {
-        if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
-        {
-            return Transitions["OnEnemyDeath"];
-        }
+        // if (_myEnemy.CurrentLife <= 0 && Transitions.ContainsKey("OnEnemyDeath"))
+        // {
+        //     return Transitions["OnEnemyDeath"];
+        // }
 
-       if(!_isAttack && Transitions.ContainsKey("OnEnemyPatrol"))
-       {
-            return Transitions["OnEnemyPatrol"];
-       }
+        //if(!_isAttack && Transitions.ContainsKey("OnEnemyPatrol"))
+        //{
+        //     return Transitions["OnEnemyPatrol"];
+        //}
 
-        return this;
+        // return this;
+        throw new NotImplementedException();
     }
 
     void DetectPlayer() //IA2-P2
@@ -62,6 +63,7 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
         {
             _isAttack = false;
             _myAnim.SetBool("Range Attack", false);
+            FinishState();
             return;
         }
         else

@@ -46,40 +46,57 @@ public class EnemyController : MonoBehaviour //IA2-P3
     float _distanceToArrows;
     float _distanceToKnife;
 
+    [Header("GOAP")]
+    [SerializeField] float _replanTime = 2f;
+    Coroutine _replanRoutine;
+
     void Start()
     {
         //_fsm = ConfigureFSM();
         //_fsm.Active = true;
+        GOAPPlan();
+        //_replanRoutine = StartCoroutine(PeriodicReplan());
     }
 
-    public FiniteStateMachine ConfigureFSM()
+    void Update()
     {
-        Dictionary<IState, IState[]> transitions = new Dictionary<IState, IState[]>();
-        transitions.Add(_idle, new IState[] { _death, _rangeAttack, _patrol, });
-        transitions.Add(_patrol, new IState[] { _death, _idle, _rangeAttack });
-        transitions.Add(_rangeAttack, new IState[] { _death, _idle, _patrol });
-        transitions.Add(_death, new IState[] { });
-
-        IState prevState = _idle;
-        var fsm = new FiniteStateMachine(prevState, StartCoroutine);
-
-        //IA2-P1
-        var allTransitions = transitions.Aggregate(new List<Tuple<string, IState, IState>>(), (acum, current) =>
+        if (_myEnemy.CurrentLife <= 0 && !(_fsm.CurrentState is EnemyDeath))
         {
-            foreach (var state in current.Value)
-            {
-                acum.Add(Tuple.Create("On" + state.Name, current.Key, state));
-            }
-            return acum;
-        });
-
-        foreach (var transition in allTransitions)
-        {
-            fsm.AddTransition(transition.Item1, transition.Item2, transition.Item3);
+            _fsm.Active = false;
+            _fsm = new FiniteStateMachine(_death, StartCoroutine);
+            _fsm.Active = true;
+            return;
         }
-
-        return fsm;
     }
+
+    //public FiniteStateMachine ConfigureFSM()
+    //{
+    //    Dictionary<IState, IState[]> transitions = new Dictionary<IState, IState[]>();
+    //    transitions.Add(_idle, new IState[] { _death, _rangeAttack, _patrol, });
+    //    transitions.Add(_patrol, new IState[] { _death, _idle, _rangeAttack });
+    //    transitions.Add(_rangeAttack, new IState[] { _death, _idle, _patrol });
+    //    transitions.Add(_death, new IState[] { });
+
+    //    IState prevState = _idle;
+    //    var fsm = new FiniteStateMachine(prevState, StartCoroutine);
+
+    //    //IA2-P1
+    //    var allTransitions = transitions.Aggregate(new List<Tuple<string, IState, IState>>(), (acum, current) =>
+    //    {
+    //        foreach (var state in current.Value)
+    //        {
+    //            acum.Add(Tuple.Create("On" + state.Name, current.Key, state));
+    //        }
+    //        return acum;
+    //    });
+
+    //    foreach (var transition in allTransitions)
+    //    {
+    //        fsm.AddTransition(transition.Item1, transition.Item2, transition.Item3);
+    //    }
+
+    //    return fsm;
+    //}
     void GOAPPlan()
     {
         //Distancias player y armas
@@ -198,6 +215,19 @@ public class EnemyController : MonoBehaviour //IA2-P3
     {
         //TODO: debuggeamos para ver por qué no pudo planear y encontrar como hacer para que no pase nunca mas
         Debug.LogWarning("No se pudo generar un plan con GOAP.");
+    }
+
+    IEnumerator PeriodicReplan()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(_replanTime);
+
+            if (_fsm == null || !_fsm.Active || _target == null || !_target.Alive)
+            {
+                GOAPPlan();
+            }
+        }
     }
     void OnDrawGizmos()
     {

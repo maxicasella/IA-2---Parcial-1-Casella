@@ -14,8 +14,10 @@ public class WeightedNode<T>
 
     public WeightedNode(T element, float weight)
     {
+        if (element == null)
+            Debug.Log("Se creó un WeightedNode con elemento null.");
+
         _element = element;
         _weight = weight;
     }
-
 }

@@ -23,9 +23,10 @@ public class AStar<T> {
         
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        
+
         while (!queue.IsEmpty) {
             var dequeued = queue.Dequeue();
+
             visited.Add(dequeued.Element);
 
             if (isGoal(dequeued.Element)) {

@@ -92,7 +92,24 @@ namespace FSM {
                     OnUnActive?.Invoke();
             }
         }
+        //GOAP
+        public bool Trigger(string transitionName)
+        {
+            if (CurrentState.Transitions != null && CurrentState.Transitions.TryGetValue(transitionName, out var nextState))
+            {
+                var previousState = CurrentState;
+                var transitionParameters = CurrentState.Exit(nextState);
 
+                Debug.Log($"FSM Trigger: transitioning from '{previousState.Name}' to '{nextState.Name}' via '{transitionName}'.");
+
+                CurrentState = nextState;
+                CurrentState.Enter(previousState, transitionParameters);
+                return true;
+            }
+
+            Debug.LogWarning($"FSM Trigger: No transition '{transitionName}' found from state '{CurrentState.Name}'.");
+            return false;
+        }
 
     }
 }

@@ -61,12 +61,13 @@ public class EnemyPickKnife : MonoBaseState
     }
     public override IState ProcessInput()
     {
-        if (_pickKnife && Transitions.ContainsKey("OnEnemyPatroll"))
-        {
-            return Transitions["OnEnemyPatroll"];
-        }
+        //if (_pickKnife && Transitions.ContainsKey("OnEnemyPatroll"))
+        //{
+        //    return Transitions["OnEnemyPatroll"];
+        //}
 
-        return this;
+        //return this;
+        throw new NotImplementedException();
     }
     Node FindArrowsNode()
     {
@@ -168,5 +169,6 @@ public class EnemyPickKnife : MonoBaseState
         Destroy(_knifeGO);
         yield return new WaitForSeconds(1f);
         _pickKnife = true;
+        FinishState();
     }
 }

@@ -9,7 +9,10 @@ namespace FSM {
         public event Action     OnNeedsReplan;
         public event StateEvent OnEnter;
         public event StateEvent OnExit;
-        
+
+        //GOAP
+        public Action OnStateFinished;
+
         public virtual string Name => GetType().Name;
 
         public virtual bool HasStarted { get; set; }
@@ -46,5 +49,11 @@ namespace FSM {
         protected virtual void OnUnActive() {}
 
         public abstract IState ProcessInput();
+
+        //GOAP
+        protected void FinishState() 
+        {
+            OnStateFinished?.Invoke();
+        }
     }
 }
