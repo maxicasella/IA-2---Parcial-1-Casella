@@ -12,6 +12,10 @@ public class PriorityQueue<T>
     /// <param name="element"></param>
     public void Enqueue(WeightedNode<T> element)
     {
+        if (element == null || element.Element == null)
+        {
+            return;
+        }
         _queue.Add(element);
     }
 
@@ -21,19 +25,34 @@ public class PriorityQueue<T>
     /// <returns></returns>
     public WeightedNode<T> Dequeue()
     {
-        var min = default(WeightedNode<T>);
-        var minWeight = float.MaxValue;
-
-        foreach (var element in _queue.Where(n => !(n.Weight >= minWeight)))
+        if (_queue.Count == 0)
         {
-            min = element;
-            minWeight = element.Weight;
+            return null;
         }
 
-        var newQueue = _queue.Where(n => n != min).ToList();
+        WeightedNode<T> min = null;
+        float minWeight = float.MaxValue;
 
-        _queue = newQueue;
+        foreach (var element in _queue)
+        {
+            if (element == null)
+            {
+                continue;
+            }
 
+            if (element.Weight < minWeight)
+            {
+                min = element;
+                minWeight = element.Weight;
+            }
+        }
+
+        if (min == null)
+        {
+            return null;
+        }
+
+        _queue.Remove(min);
         return min;
     }
 

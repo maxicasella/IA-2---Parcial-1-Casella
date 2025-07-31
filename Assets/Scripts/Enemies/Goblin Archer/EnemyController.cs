@@ -15,8 +15,7 @@ public enum EnemyStates
 
 public class EnemyController : MonoBehaviour //IA2-P3
 {
-    [SerializeField] Enemy _myEnemy;
-    [SerializeField] SquareQuery _myQuery;
+
     [Header("States")]
     [SerializeField] EnemyPatrol _patrol;
     [SerializeField] EnemyRangeAttack _rangeAttack;
@@ -41,6 +40,20 @@ public class EnemyController : MonoBehaviour //IA2-P3
     [SerializeField] int _kickDamage;
     [SerializeField] int _knifeDamage;
 
+    [Header("Nodes")]
+    [SerializeField] Node start;
+    [SerializeField] Node end;
+    [SerializeField] SpatialGrid _spatialGrid;
+
+    [Header("Components")]
+    [SerializeField] Enemy _myEnemy;
+    [SerializeField] SquareQuery _myQuery;
+    [SerializeField] Animator _myAnim;
+    public List<Node> path;
+
+    [Header("Movement")]
+    [SerializeField] float _movementSpeed;
+    [SerializeField] float _rotationSpeed;
     [Header("Distances to Objects")]
     float _distanceToPlayer;
     float _distanceToArrows;
@@ -52,6 +65,8 @@ public class EnemyController : MonoBehaviour //IA2-P3
 
     void Start()
     {
+        _patrol = new EnemyPatrol(_myEnemy, start, end, _spatialGrid, _myQuery, _myAnim, _movementSpeed, _rotationSpeed, this);
+
         //_fsm = ConfigureFSM();
         //_fsm.Active = true;
         GOAPPlan();
@@ -132,13 +147,6 @@ public class EnemyController : MonoBehaviour //IA2-P3
             distanceToPlayer = _distanceToPlayer
         };
 
-        GOAPState initialState = new GOAPState(worldModel.Clone());
-
-        var desiredWorldModel = worldModel.Clone();
-        desiredWorldModel.alive = false;
-
-        GOAPState desiredState = new GOAPState(desiredWorldModel);
-
         var actions = new List<GOAPAction>
         {
             //Acciones con efectos, precondiciones, costos y estados linkeados    
@@ -189,8 +197,19 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .Pre("lowHP", wm => wm.life <= (0.25f * wm.maxLife))
                 .Effect("recoverHP", wm => wm.life = Mathf.Min(wm.maxLife, wm.life + (0.5f * wm.maxLife)))
                 .Cost(_ => 1f)
-                .LinkedState(_recoveryLife)
+                .LinkedState(_recoveryLife),
         };
+
+        var patrolGoal = new GOAPAction("PatrolGoal")
+                        .Pre("isPatrolling", wm => true);
+        GOAPState initialState = new GOAPState(worldModel.Clone(), patrolGoal);
+
+        var desiredWorldModel = worldModel.Clone();
+
+        var killAction = new GOAPAction("KillPlayerGoal")
+            .Pre("isPlayerAlive", wm => wm.alive == false);
+
+        var desiredState = new GOAPState(desiredWorldModel, killAction);
 
         var planner = new GoapPlanner();
         planner.OnPlanCompleted += OnPlanCompleted;
@@ -223,8 +242,9 @@ public class EnemyController : MonoBehaviour //IA2-P3
         {
             yield return new WaitForSeconds(_replanTime);
 
-            if (_fsm == null || !_fsm.Active || _target == null || !_target.Alive)
+            if (_fsm == null || _fsm.Active || _target != null || !_target.Alive)
             {
+                Debug.Log("Replanteo");
                 GOAPPlan();
             }
         }

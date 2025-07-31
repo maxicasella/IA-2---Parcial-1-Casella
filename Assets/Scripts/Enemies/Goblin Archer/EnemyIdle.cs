@@ -55,8 +55,8 @@ public class EnemyIdle : MonoBaseState //IA2-P3
         //        return Transitions["OnEnemyPatrol"];
         //}
 
-        //return this;
-        throw new NotImplementedException();
+        return this;
+        //throw new NotImplementedException();
     }
     bool DetectPlayer() //IA2-P2
     {

@@ -66,8 +66,8 @@ public class EnemyPickKnife : MonoBaseState
         //    return Transitions["OnEnemyPatroll"];
         //}
 
-        //return this;
-        throw new NotImplementedException();
+        return this;
+        //throw new NotImplementedException();
     }
     Node FindArrowsNode()
     {

@@ -51,8 +51,8 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
         //     return Transitions["OnEnemyPatrol"];
         //}
 
-        // return this;
-        throw new NotImplementedException();
+        return this;
+        //throw new NotImplementedException();
     }
 
     void DetectPlayer() //IA2-P2

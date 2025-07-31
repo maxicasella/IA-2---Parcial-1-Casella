@@ -107,9 +107,23 @@ public class GoapPlanner
     }
     private static bool Satisfies(GOAPState current, GOAPState goal)
     {
-        return goal.generatingAction?.preconditions
-                   .Values.All(cond => cond(current.worldModel)) ?? false;
+        if (goal.generatingAction == null || goal.generatingAction.preconditions == null)
+        {
+            Debug.Log("Satisfies: El estado objetivo no tiene precondiciones.");
+            return false;
+        }
+
+        foreach (var cond in goal.generatingAction.preconditions)
+        {
+            bool valid = cond.Value(current.worldModel);
+            Debug.Log($"Satisfies: {cond.Key} => {(valid ? "OK" : "FALLÓ")}");
+            if (!valid)
+                return false;
+        }
+
+        return true;
     }
+
 
     private static float GetHeuristic(GOAPState from, GOAPState goal)
     {
@@ -123,25 +137,41 @@ public class GoapPlanner
         ref int watchdog)
     {
         if (watchdog-- <= 0)
+        {
+            Debug.LogWarning("WATCHDOG: Se alcanzó el límite de iteraciones en GOAP.");
             return Enumerable.Empty<WeightedNode<GOAPState>>();
+        }
 
         if (node == null || node.worldModel == null)
         {
-            Debug.Log("GOAPState o WorldModel es null en Explode");
+            Debug.LogWarning("Explode: GOAPState o WorldModel es null.");
             return Enumerable.Empty<WeightedNode<GOAPState>>();
         }
 
         var validActions = actions
-                        .Where(action =>
-                        {
-                            if (action == null || action.preconditions == null || action.effects == null || action.cost == null)
-                            {
-                                Debug.Log("Acción mal configurada en GOAP");
-                                return false;
-                            }
+            .Where(action =>
+            {
+                if (action == null)
+                {
+                    Debug.LogWarning("Acción null.");
+                    return false;
+                }
 
-                            return action.preconditions.Values.All(cond => cond != null && cond(node.worldModel));
-                        });
+                if (action.preconditions == null || action.effects == null || action.cost == null)
+                {
+                    Debug.LogWarning($"Acción {action.name} mal configurada.");
+                    return false;
+                }
+
+                bool result = action.preconditions.Values.All(cond => cond != null && cond(node.worldModel));
+                Debug.Log($"Evaluando acción {action.name}: {(result ? "válida" : "inválida")}");
+                return result;
+            }).ToList();
+
+        if (!validActions.Any())
+        {
+            Debug.LogWarning("Explode: Ninguna acción es válida desde este estado.");
+        }
 
         return validActions.Select(action =>
         {
@@ -151,19 +181,13 @@ public class GoapPlanner
                 effect?.Invoke(newModel);
             }
 
-            float actionCost = action.cost != null ? action.cost(newModel) : float.MaxValue;
-
-            if (newModel == null)
-            {
-                Debug.Log($"Explode: newModel es null para acción {action.name}");
-                return null; // Esto va a romper el Select si no filtrás luego
-            }
-            Debug.Log("GOAP State ok");
+            float actionCost = action.cost(newModel);
             return new WeightedNode<GOAPState>(
                 new GOAPState(newModel, action) { step = node.step + 1 },
                 actionCost
             );
         }).Where(node => node != null);
     }
+
 
 }

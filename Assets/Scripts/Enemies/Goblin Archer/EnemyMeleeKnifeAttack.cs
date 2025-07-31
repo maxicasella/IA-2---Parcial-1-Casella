@@ -43,8 +43,8 @@ public class EnemyMeleeKnifeAttack : MonoBaseState
         //{
         //    return Transitions["OnEnemyPatrol"];
         //}
-        //return this;
-        throw new NotImplementedException();
+        return this;
+        //throw new NotImplementedException();
     }
     void AttackPlayer()
     {
