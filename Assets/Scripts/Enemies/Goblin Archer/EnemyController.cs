@@ -65,12 +65,8 @@ public class EnemyController : MonoBehaviour //IA2-P3
 
     void Start()
     {
-        _patrol = new EnemyPatrol(_myEnemy, start, end, _spatialGrid, _myQuery, _myAnim, _movementSpeed, _rotationSpeed, this);
-
         //_fsm = ConfigureFSM();
         //_fsm.Active = true;
-        GOAPPlan();
-        //_replanRoutine = StartCoroutine(PeriodicReplan());
     }
 
     void Update()
@@ -82,6 +78,8 @@ public class EnemyController : MonoBehaviour //IA2-P3
             _fsm.Active = true;
             return;
         }
+        if(_fsm == null) GOAPPlan();
+        //_replanRoutine = StartCoroutine(PeriodicReplan());
     }
 
     //public FiniteStateMachine ConfigureFSM()
@@ -164,7 +162,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .Pre("isPlayerInRange", wm => wm.distanceToPlayer <= wm.rangeAttackDistance)
                 .Pre("hasArrows", wm => wm.arrows > 0)
                 .Effect("isPlayerAlive", wm => wm.alive = false)
-                .Cost(wm => 1f + (1f / (wm.arrows > 0 ? wm.rangeAttackDistance : 1f)))
+                .Cost(_ => 1f/*wm => 1f + (1f / (wm.arrows > 0 ? wm.rangeAttackDistance : 1f))*/)
                 .LinkedState(_rangeAttack),
 
             new GOAPAction("Knife Melee Attack")
@@ -202,7 +200,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
 
         var patrolGoal = new GOAPAction("PatrolGoal")
                         .Pre("isPatrolling", wm => true);
-        GOAPState initialState = new GOAPState(worldModel.Clone(), patrolGoal);
+        GOAPState initialState = new GOAPState(worldModel.Clone());
 
         var desiredWorldModel = worldModel.Clone();
 

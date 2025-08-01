@@ -26,11 +26,11 @@ public class AStar<T> {
 
         while (!queue.IsEmpty) {
             var dequeued = queue.Dequeue();
-            if (dequeued == null || dequeued.Element == null)
-            {
-                OnCantCalculate?.Invoke();
-                yield break;
-            }
+            //if (dequeued == null || dequeued.Element == null)
+            //{
+            //    OnCantCalculate?.Invoke();
+            //    yield break;
+            //}
             visited.Add(dequeued.Element);
 
             if (isGoal(dequeued.Element)) {

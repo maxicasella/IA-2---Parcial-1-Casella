@@ -21,15 +21,16 @@ public class Node : MonoBehaviour, IGridEntity
     {
         _spatialGrid.Add(this);
         _spatialGrid.UpdateEntity(this);
+        AddNodes();
     }
 
     void Update()
     {
-        if(neighbours.Length == 0)
-        {
-            _spatialGrid.UpdateEntity(this);
-            AddNodes();
-        }
+        //if(neighbours.Length == 0)
+        //{
+        //    _spatialGrid.UpdateEntity(this);
+        //    AddNodes();
+        //}
     }
 
     void AddNodes()

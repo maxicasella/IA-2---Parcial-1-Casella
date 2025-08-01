@@ -27,19 +27,7 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     bool _isPatrol;
     bool _toAttack;
     bool _isGoalNode = false;
-    MonoBehaviour _coroutineRunner;
-    public EnemyPatrol(Enemy enemy,Node startNode, Node endNode, SpatialGrid spatialGrid, SquareQuery query, Animator animator, float movementSpeed, float rotationSpeed, MonoBehaviour coroutineRunner)
-    {
-        _myEnemy = enemy;
-        start = startNode;
-        end = endNode;
-        _spatialGrid = spatialGrid;
-        _myQuery = query;
-        _myAnim = animator;
-        _movementSpeed = movementSpeed;
-        _rotationSpeed = rotationSpeed;
-        _coroutineRunner = coroutineRunner;
-    }
+
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
         _isPatrol = true;
@@ -54,6 +42,7 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
         PatrolLogic();
         ResumePatrol();
         DetectPlayer();
+        if (_toAttack) FinishState();
     }
     public override Dictionary<string, object> Exit(IState to)
     {
@@ -91,16 +80,11 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
 
     public void PatrolLogic()
     {
-        //if (_isPatrol && !_calculatePath)
-        //{
-        //    StartCoroutine(AStar.CalculatePath(start, x => x == end, x => x.neighbours.Select(x => new WeightedNode<Node>(x, 1)),
-        //                        x => x.heuristic, PathCompleted, PathCantCompleted));
-        //}
         if (_isPatrol && !_calculatePath)
         {
             _calculatePath = true;
 
-            _coroutineRunner.StartCoroutine(_astar.Run(
+            StartCoroutine(_astar.Run(
                 start,
                 x => x == end,
                 x => x.neighbours.Select(n => new WeightedNode<Node>(n, 1)),
@@ -111,7 +95,7 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     public void StopPatrol()
     {
         _myAnim.SetBool("Walk", false);
-        _coroutineRunner.StopAllCoroutines();
+        StopAllCoroutines();
         _calculatePath = false;
         _isGoalNode = false;
         _isPatrol = false; 
@@ -122,21 +106,6 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
         _isPatrol = true; 
     }
 
-    //void PathCompleted(IEnumerable<Node> newPath)
-    //{
-    //    _calculatePath = true;
-    //    path = new List<Node>(newPath);
-
-    //    if (path.Count > 0)
-    //    {
-    //        _myAnim.SetBool("Walk", true);
-    //        StartCoroutine(FollowPath());
-    //    }
-    //    else
-    //    {
-    //        PathCantCompleted();
-    //    }
-    //}
     void PathCompleted(IEnumerable<Node> newPath)
     {
         path = new List<Node>(newPath);
@@ -144,32 +113,32 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
         if (path.Count > 0)
         {
             _myAnim.SetBool("Walk", true);
-            _coroutineRunner.StartCoroutine(FollowPath());
+            StartCoroutine(FollowPath());
         }
         else
         {
+            Debug.Log("Path nodes: " + path.Count.ToString());
             PathCantCompleted();
         }
     }
 
     void PathCantCompleted()
     {
+        Debug.LogWarning($"No se pudo calcular el path de '{start}' a '{end}'.");
+
+        if (start == null || end == null)
+            Debug.LogError("Start o End es null.");
+        else if (start.neighbours == null || !start.neighbours.Any())
+            Debug.LogError("Start no tiene vecinos definidos.");
         _myAnim.SetBool("Walk", false);
-        Debug.Log("Path calculation failed.");
     }
 
     IEnumerator FollowPath()
     {
         foreach (var node in path)
         {
-            if (node == null || node.transform == null)
-            {
-                Debug.LogError("Node en path es null. Abortando FollowPath.");
-                yield break;
-            }
             Vector3 targetPosition = node.transform.position;
 
-            Debug.Log("Distancia: " + Vector3.Distance(transform.position, targetPosition));
             while (Vector3.Distance(transform.position, targetPosition) > 0.1f)
             {
                 Vector3 moveDirection = (targetPosition - transform.position).normalized;
@@ -185,7 +154,10 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
 
                 if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
                 {
+                    _myAnim.SetBool("Walk", false);
                     _isGoalNode = true;
+                    _isPatrol = false;
+                    _calculatePath = false;
                     yield break; 
                 }
                 yield return null;
@@ -195,7 +167,8 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
             {
                 _isGoalNode = true;
                 _myAnim.SetBool("Walk", false);
-                FinishState();
+                _isPatrol = false;
+                _calculatePath = false;
                 yield break; 
             }
             yield return new WaitForSeconds(0.1f);
@@ -210,7 +183,6 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
 
         if (target != null)
         {
-            FinishState();
             _myAnim.SetBool("Walk", false);
             return _toAttack = true;
         }
