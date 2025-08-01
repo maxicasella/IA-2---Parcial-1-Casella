@@ -18,15 +18,15 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     [SerializeField] float _rotationSpeed;
     [SerializeField] float _shootCooldown;
     public int maxArrows;
-    int _actualArrows;
+    [SerializeField] int _actualArrows;
 
     public int ActualArrows { get { return _actualArrows; } }
     bool _isAttack = false;
     float _nextShootTime;
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
-        _actualArrows = maxArrows;
-        _myAnim.SetBool("Range Attack", true);
+        //_actualArrows = maxArrows;
+        //_myAnim.SetBool("Range Attack", true);
 
         base.Enter(from, transitionParameters);
     }
@@ -59,7 +59,7 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     {
         var target = _myQuery.Query().Select(x => x as CharacterController).Where(x => x != null).FirstOrDefault();
 
-        if (target == null)
+        if (target == null || _actualArrows <= 0)
         {
             _isAttack = false;
             _myAnim.SetBool("Range Attack", false);

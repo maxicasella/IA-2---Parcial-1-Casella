@@ -152,9 +152,9 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .Effect("isPlayerInRange", wm =>
                 { wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.rangeAttackDistance - 0.1f);
                 })
-                .Effect("isPlayerNear", wm =>
-                { wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.meleeAttackDistance - 0.1f);
-                })
+                //.Effect("isPlayerNear", wm =>
+                //{ wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.meleeAttackDistance - 0.1f);
+                //})
                 .Cost(_ => 1f)
                 .LinkedState(_patrol),
 
@@ -162,21 +162,21 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .Pre("isPlayerInRange", wm => wm.distanceToPlayer <= wm.rangeAttackDistance)
                 .Pre("hasArrows", wm => wm.arrows > 0)
                 .Effect("isPlayerAlive", wm => wm.alive = false)
-                .Cost(_ => 1f/*wm => 1f + (1f / (wm.arrows > 0 ? wm.rangeAttackDistance : 1f))*/)
+                .Cost(wm => 1f + (1f / Mathf.Max(1, wm.rangeAttackDistance)))
                 .LinkedState(_rangeAttack),
 
             new GOAPAction("Knife Melee Attack")
-                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
+                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= 1.0f)
                 .Pre("hasKnife", wm => wm.weapon == "Knife")
                 .Effect("isPlayerAlive", wm => wm.alive = false)
-                .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKnifeDamage)))
+                .Cost(wm => 2f + (1f / Mathf.Max(1f, wm.meleeKnifeDamage)))
                 .LinkedState(_meleeKnifeAttack),
 
             new GOAPAction("Kick Melee Attack")
-                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
+                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= 1.0f)
                 .Pre("noKnife", wm => wm.weapon != "Knife")
                 .Effect("isPlayerAlive", wm => wm.alive = false)
-                .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKickDamage)))
+                .Cost(wm => 2f + (1f / Mathf.Max(1f, wm.meleeKickDamage)))
                 .LinkedState(_meleeKickAttack),
 
             new GOAPAction("Pick Arrows")
