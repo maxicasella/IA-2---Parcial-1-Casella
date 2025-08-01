@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public enum WeaponType
 {
@@ -48,5 +49,33 @@ public class WorldModel
             distanceToKnife = this.distanceToKnife,
             distanceToPlayer = this.distanceToPlayer
         };
+    }
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+            return false;
+
+        WorldModel other = (WorldModel)obj;
+
+        return Mathf.Approximately(life, other.life) &&
+               Mathf.Approximately(maxLife, other.maxLife) &&
+               alive == other.alive &&
+               weapon == other.weapon &&
+               arrows == other.arrows &&
+               maxArrows == other.maxArrows &&
+               Mathf.Approximately(rangeAttackDistance, other.rangeAttackDistance) &&
+               Mathf.Approximately(meleeAttackDistance, other.meleeAttackDistance) &&
+               meleeKnifeDamage == other.meleeKnifeDamage &&
+               meleeKickDamage == other.meleeKickDamage &&
+               Mathf.Approximately(distanceToArrows, other.distanceToArrows) &&
+               Mathf.Approximately(distanceToKnife, other.distanceToKnife) &&
+               Mathf.Approximately(distanceToPlayer, other.distanceToPlayer);
+    }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(
+            HashCode.Combine(life, maxLife, alive, weapon, arrows, maxArrows, rangeAttackDistance, meleeAttackDistance),
+            HashCode.Combine(meleeKnifeDamage, meleeKickDamage, distanceToArrows, distanceToKnife, distanceToPlayer)
+        );
     }
 }

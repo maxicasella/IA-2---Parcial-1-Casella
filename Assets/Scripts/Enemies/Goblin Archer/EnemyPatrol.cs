@@ -23,14 +23,17 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     [SerializeField] float _rotationSpeed;
 
     AStar<Node> _astar;
-    bool _calculatePath = false;
-    bool _isPatrol;
-    bool _toAttack;
-    bool _isGoalNode = false;
+    public bool _calculatePath = false;
+    public bool _isPatrol;
+    public bool _toAttack;
+    public bool _isGoalNode = false;
 
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
+        Debug.Log("Enter Patrol");
         _isPatrol = true;
+        _calculatePath = false;
+        _toAttack = false;
         //_myAnim.SetBool("Walk", true);
         _astar = new AStar<Node>();
         _astar.OnPathCompleted += PathCompleted;
@@ -39,10 +42,15 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     }
     public override void UpdateLoop()
     {
-        PatrolLogic();
         ResumePatrol();
+        PatrolLogic();
         DetectPlayer();
-        if (_toAttack) FinishState();
+        if (_toAttack)
+        {
+            FinishState();
+            Debug.Log("Patrol: player detected -> Exit");
+            return;
+        }
     }
     public override Dictionary<string, object> Exit(IState to)
     {
@@ -51,10 +59,11 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
 
         if (_astar != null)
         {
+            Debug.Log("Desuscribo Astar");
             _astar.OnPathCompleted -= PathCompleted;
             _astar.OnCantCalculate -= PathCantCompleted;
         }
-
+        Debug.Log("Exit Patrol");
         return base.Exit(to);
     }
     public override IState ProcessInput()
@@ -94,7 +103,6 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
     }
     public void StopPatrol()
     {
-        _myAnim.SetBool("Walk", false);
         StopAllCoroutines();
         _calculatePath = false;
         _isGoalNode = false;
@@ -155,23 +163,22 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
                 if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
                 {
                     _myAnim.SetBool("Walk", false);
-                    _isGoalNode = true;
                     _isPatrol = false;
                     _calculatePath = false;
+                    _isGoalNode = true;
                     yield break; 
                 }
                 yield return null;
             }
             transform.position = targetPosition;
             if (node == end)
-            {
-                _isGoalNode = true;
-                _myAnim.SetBool("Walk", false);
+            {   _myAnim.SetBool("Walk", false);
                 _isPatrol = false;
                 _calculatePath = false;
+                _isGoalNode = true;
                 yield break; 
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
         _myAnim.SetBool("Walk", false);
         _calculatePath = false;

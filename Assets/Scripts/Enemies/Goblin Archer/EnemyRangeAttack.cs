@@ -21,7 +21,7 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     [SerializeField] int _actualArrows;
 
     public int ActualArrows { get { return _actualArrows; } }
-    bool _isAttack = false;
+    public bool _isAttack = false;
     float _nextShootTime;
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
@@ -32,7 +32,22 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     }
     public override void UpdateLoop()
     {
+        if (_actualArrows <= 0)
+        {
+            _myAnim.SetBool("Range Attack", false);
+            _isAttack = false;
+            Debug.Log("Range attack: arrows = 0 -> Exit");
+            FinishState();
+            return;
+        }
+
         DetectPlayer();
+        
+        if (!_isAttack) 
+        {
+            FinishState();
+            return;
+        }
     }
     public override Dictionary<string, object> Exit(IState to)
     {
@@ -59,10 +74,11 @@ public class EnemyRangeAttack : MonoBaseState //IA2-P3
     {
         var target = _myQuery.Query().Select(x => x as CharacterController).Where(x => x != null).FirstOrDefault();
 
-        if (target == null || _actualArrows <= 0)
+        if (target == null)
         {
             _isAttack = false;
             _myAnim.SetBool("Range Attack", false);
+            Debug.Log("Range Attack target null -> Exit");
             FinishState();
             return;
         }

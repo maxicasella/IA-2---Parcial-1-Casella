@@ -57,6 +57,13 @@ public class GoapPlanner
 
         var fsm = new FiniteStateMachine(actions[0].linkedState, startCoroutine);
 
+        var configuredStates = new List<IState>();
+        foreach (var action in actions)
+        {
+            var state = action.linkedState.Configure(fsm);
+            configuredStates.Add(state);
+        }
+
         for (int i = 0; i < actions.Count - 1; i++)
         {
             var currentState = actions[i].linkedState;

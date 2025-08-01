@@ -39,6 +39,11 @@ public class EnemyPickArrows : MonoBaseState
         _arrowsNode = FindArrowsNode();
 
         if (_arrowsNode != null) end = _arrowsNode;
+        if (_arrowsNode != null && Vector3.Distance(transform.position, _arrowsNode.transform.position) <= 0.2f)
+        {
+            StartCoroutine(ExecuteCollect());
+            return;
+        }
 
         _astar.OnPathCompleted += PathCompleted;
         _astar.OnCantCalculate += PathCantCompleted;
@@ -47,6 +52,12 @@ public class EnemyPickArrows : MonoBaseState
     public override void UpdateLoop()
     {
         GoToWeapon();
+        if (_pickArrows)
+        {
+            FinishState();
+            Debug.Log("Exit Update Loop Pick Arrows");
+            return;
+        }
     }
 
     public override Dictionary<string, object> Exit(IState to)
@@ -126,11 +137,13 @@ public class EnemyPickArrows : MonoBaseState
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * _movementSpeed);
                 _spatialGrid.UpdateEntity(_myEnemy);
 
-                //if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
-                //{
-                //    PickArrows();
-                //    yield break;
-                //}
+                if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
+                {
+                    PickArrows();
+                    _isGoalNode = true;
+                    _myAnim.SetBool("Walk", false);
+                    yield break;
+                }
                 yield return null;
             }
             transform.position = targetPosition;
@@ -138,6 +151,7 @@ public class EnemyPickArrows : MonoBaseState
             {
                 PickArrows();
                 _isGoalNode = true;
+                _myAnim.SetBool("Walk", false);
                 yield break;
             }
             yield return new WaitForSeconds(0.1f);
@@ -155,17 +169,22 @@ public class EnemyPickArrows : MonoBaseState
     }
     void PickArrows()
     {
-        if (_rangeAttackState.ActualArrows == _rangeAttackState.maxArrows) return;
+        if (_rangeAttackState.ActualArrows == _rangeAttackState.maxArrows)
+        {
+            Debug.Log("Flechas al maximo -> Exit");
+            FinishState();
+            return;
+        }
         else StartCoroutine(ExecuteCollect());
     }
 
     IEnumerator ExecuteCollect()
     {
         _myAnim.SetBool("Walk", false);
-        _particles.Play();
+        //_particles.Play();
         _rangeAttackState.PickArrows();
+        Debug.Log("Pick Arrows finished.");
         yield return new WaitForSeconds(1f);
         _pickArrows = true;
-        FinishState();
     }
 }

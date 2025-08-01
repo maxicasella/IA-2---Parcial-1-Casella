@@ -60,8 +60,9 @@ public class EnemyController : MonoBehaviour //IA2-P3
     float _distanceToKnife;
 
     [Header("GOAP")]
-    [SerializeField] float _replanTime = 2f;
+    [SerializeField] float _replanTime;
     Coroutine _replanRoutine;
+    WorldModel _lastWorldModel;
 
     void Start()
     {
@@ -78,8 +79,8 @@ public class EnemyController : MonoBehaviour //IA2-P3
             _fsm.Active = true;
             return;
         }
-        if(_fsm == null) GOAPPlan();
-        //_replanRoutine = StartCoroutine(PeriodicReplan());
+        if (_fsm == null || !_fsm.Active)
+            GOAPPlan();
     }
 
     //public FiniteStateMachine ConfigureFSM()
@@ -128,7 +129,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
                                 ? Vector3.Distance(transform.position, _pickKnife.knifePosition.position)
                                 : float.MaxValue;
 
-        var worldModel = new WorldModel
+        var currentWorldModel = new WorldModel
         {
             life = _myEnemy.CurrentLife,
             maxLife = _myEnemy.MaxLife,
@@ -144,7 +145,12 @@ public class EnemyController : MonoBehaviour //IA2-P3
             distanceToKnife = _distanceToKnife,
             distanceToPlayer = _distanceToPlayer
         };
-
+        Debug.Log("Weapon actual: " + currentWorldModel.weapon);
+        if (_lastWorldModel != null && _lastWorldModel.Equals(currentWorldModel))
+        {
+            Debug.Log("World Model sin cambios.");
+            return;
+        }
         var actions = new List<GOAPAction>
         {
             //Acciones con efectos, precondiciones, costos y estados linkeados    
@@ -166,17 +172,17 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .LinkedState(_rangeAttack),
 
             new GOAPAction("Knife Melee Attack")
-                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= 1.0f)
+                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
                 .Pre("hasKnife", wm => wm.weapon == "Knife")
                 .Effect("isPlayerAlive", wm => wm.alive = false)
-                .Cost(wm => 2f + (1f / Mathf.Max(1f, wm.meleeKnifeDamage)))
+                .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKnifeDamage)))
                 .LinkedState(_meleeKnifeAttack),
 
             new GOAPAction("Kick Melee Attack")
-                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= 1.0f)
-                .Pre("noKnife", wm => wm.weapon != "Knife")
+                .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
+                .Pre("hasKnife", wm => wm.weapon != "Knife")
                 .Effect("isPlayerAlive", wm => wm.alive = false)
-                .Cost(wm => 2f + (1f / Mathf.Max(1f, wm.meleeKickDamage)))
+                .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKickDamage)))
                 .LinkedState(_meleeKickAttack),
 
             new GOAPAction("Pick Arrows")
@@ -186,23 +192,21 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .LinkedState(_pickArrows),
 
             new GOAPAction("Pick Knife")
-                .Pre("noKnife", wm => wm.weapon != "Knife")
+                .Pre("hasKnife", wm => wm.weapon == "Bow")
                 .Effect("hasKnife", wm => wm.weapon = "Knife")
                 .Cost(wm => 1f + wm.distanceToKnife)
                 .LinkedState(_pickKnife),
 
-            new GOAPAction("Recover Life")
+            new GOAPAction("Recovery Life")
                 .Pre("lowHP", wm => wm.life <= (0.25f * wm.maxLife))
-                .Effect("recoverHP", wm => wm.life = Mathf.Min(wm.maxLife, wm.life + (0.5f * wm.maxLife)))
+                .Effect("recoveryHP", wm => wm.life = Mathf.Min(wm.maxLife, wm.life + (0.5f * wm.maxLife)))
                 .Cost(_ => 1f)
                 .LinkedState(_recoveryLife),
         };
 
-        var patrolGoal = new GOAPAction("PatrolGoal")
-                        .Pre("isPatrolling", wm => true);
-        GOAPState initialState = new GOAPState(worldModel.Clone());
+        GOAPState initialState = new GOAPState(currentWorldModel.Clone());
 
-        var desiredWorldModel = worldModel.Clone();
+        var desiredWorldModel = currentWorldModel.Clone();
 
         var killAction = new GOAPAction("KillPlayerGoal")
             .Pre("isPlayerAlive", wm => wm.alive == false);
@@ -227,6 +231,8 @@ public class EnemyController : MonoBehaviour //IA2-P3
         //_fsm.Active = true;
         Debug.Log("Plan GOAP completado.");
         GOAPExecutePlan(plan);
+        if (_replanRoutine == null)
+            _replanRoutine = StartCoroutine(PeriodicReplan());
     }
     private void OnCantPlan()
     {
@@ -240,7 +246,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
         {
             yield return new WaitForSeconds(_replanTime);
 
-            if (_fsm == null || _fsm.Active || _target != null || !_target.Alive)
+            if (_fsm == null || _fsm.Active)
             {
                 Debug.Log("Replanteo");
                 GOAPPlan();

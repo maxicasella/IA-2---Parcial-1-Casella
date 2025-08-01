@@ -165,7 +165,7 @@ public class EnemyPickKnife : MonoBaseState
     IEnumerator ExecuteCollect()
     {
         _myAnim.SetBool("Walk", false);
-        _particles.Play();
+        //_particles.Play();
         Destroy(_knifeGO);
         yield return new WaitForSeconds(1f);
         _pickKnife = true;

@@ -57,6 +57,7 @@ public class EnemyMeleeKickAttack : MonoBaseState
         {
             _isAttack = false;
             _myAnim.SetBool("Kick Attack", false);
+            FinishState();
             return;
         }
 
