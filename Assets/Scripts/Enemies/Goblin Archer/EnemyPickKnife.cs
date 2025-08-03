@@ -15,6 +15,7 @@ public class EnemyPickKnife : MonoBaseState
 
     [Header("Components")]
     [SerializeField] Enemy _myEnemy;
+    [SerializeField] EnemyController _myEnemyCtr;
     [SerializeField] SquareQuery _myQuery = null;
     public Transform knifePosition;
     [SerializeField] GameObject _knifeGO;
@@ -32,13 +33,14 @@ public class EnemyPickKnife : MonoBaseState
     bool _isRecolecting = false;
     bool _pickKnife = false;
     
-    public WeaponType WeaponCollect { get {
-            if (_pickKnife) return WeaponType.Knife;
-            else return WeaponType.Bow;
-            } }
+    //public WeaponType WeaponCollect { get {
+    //        if (_pickKnife) return WeaponType.Knife;
+    //        else return WeaponType.Bow;
+    //        } }
 
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
+        Debug.Log("Enter Pick Knife");
         _isRecolecting = true;
         _astar = new AStar<Node>();
         _knifeNode = FindArrowsNode();
@@ -51,11 +53,17 @@ public class EnemyPickKnife : MonoBaseState
     }
     public override void UpdateLoop()
     {
+        if (_pickKnife)
+        {
+            FinishState();
+            return;
+        }
         GoToWeapon();
     }
 
     public override Dictionary<string, object> Exit(IState to)
     {
+        Debug.Log("Exit Pick Knife.");
         FinishCollect();
         return base.Exit(to);
     }
@@ -131,11 +139,13 @@ public class EnemyPickKnife : MonoBaseState
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * _movementSpeed);
                 _spatialGrid.UpdateEntity(_myEnemy);
 
-                //if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
-                //{
-                //    PickArrows();
-                //    yield break;
-                //}
+                if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
+                {
+                    PickKnife();
+                    _isGoalNode = true;
+                    _myAnim.SetBool("Walk", false);
+                    yield break;
+                }
                 yield return null;
             }
             transform.position = targetPosition;
@@ -143,6 +153,7 @@ public class EnemyPickKnife : MonoBaseState
             {
                 PickKnife();
                 _isGoalNode = true;
+                _myAnim.SetBool("Walk", false);
                 yield break;
             }
             yield return new WaitForSeconds(0.1f);
@@ -160,6 +171,7 @@ public class EnemyPickKnife : MonoBaseState
     void PickKnife()
     {
         if (_knifeGO != null && !_pickKnife) StartCoroutine(ExecuteCollect());
+        else FinishState();
     }
 
     IEnumerator ExecuteCollect()
