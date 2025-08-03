@@ -140,7 +140,6 @@ public class EnemyRecoveryLife : MonoBaseState
                     _myAnim.SetBool("Walk", false);
                     StartCoroutine(ExecuteRecovery());
                     _isGoalNode = true;
-                    FinishState();
                     yield break;
                 }
                 yield return null;
@@ -151,7 +150,6 @@ public class EnemyRecoveryLife : MonoBaseState
                 _myAnim.SetBool("Walk", false);
                 StartCoroutine(ExecuteRecovery());
                 _isGoalNode = true;
-                FinishState();
                 yield break;
             }
             yield return new WaitForSeconds(0.1f);
@@ -168,6 +166,7 @@ public class EnemyRecoveryLife : MonoBaseState
         yield return new WaitForSeconds(1f); 
 
         _isGoalNode = true;
+        FinishState();
     }
 
     void OnDrawGizmos()
