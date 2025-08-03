@@ -33,6 +33,7 @@ public class EnemyRecoveryLife : MonoBaseState
 
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
+        Debug.Log("Enter Recovery Life.");
         _isRecovery = true;
         _astar = new AStar<Node>();
         _safeEndNode = FindSafeNode();
@@ -49,6 +50,7 @@ public class EnemyRecoveryLife : MonoBaseState
     }
     public override Dictionary<string, object> Exit(IState to)
     {
+        Debug.Log("Exit Recovery Life.");
         FinishRecovery();
         if (_astar != null)
         {
@@ -133,18 +135,23 @@ public class EnemyRecoveryLife : MonoBaseState
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * _movementSpeed);
                 _spatialGrid.UpdateEntity(_myEnemy);
 
-                //if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
-                //{
-                //    StartCoroutine(ExecuteRecovery());
-                //    yield break;
-                //}
+                if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
+                {
+                    _myAnim.SetBool("Walk", false);
+                    StartCoroutine(ExecuteRecovery());
+                    _isGoalNode = true;
+                    FinishState();
+                    yield break;
+                }
                 yield return null;
             }
             transform.position = targetPosition;
             if (node == end)
             {
+                _myAnim.SetBool("Walk", false);
                 StartCoroutine(ExecuteRecovery());
                 _isGoalNode = true;
+                FinishState();
                 yield break;
             }
             yield return new WaitForSeconds(0.1f);

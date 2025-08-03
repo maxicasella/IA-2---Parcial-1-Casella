@@ -177,6 +177,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
             new GOAPAction("Knife Melee Attack")
                 .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
                 .Pre("hasKnife", wm => wm.weapon == "Knife")
+                .Pre("isHealthy", wm => wm.life > wm.maxLife * 0.25f)
                 .Effect("isPlayerAlive", wm => wm.alive = false)
                 .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKickDamage)))
                 .LinkedState(_meleeKnifeAttack),
@@ -184,6 +185,7 @@ public class EnemyController : MonoBehaviour //IA2-P3
             new GOAPAction("Kick Melee Attack")
                 .Pre("isPlayerNear", wm => wm.distanceToPlayer <= wm.meleeAttackDistance)
                 .Pre("hasKnife", wm => wm.weapon != "Knife")
+                .Pre("isHealthy", wm => wm.life > wm.maxLife * 0.25f)
                 .Effect("isPlayerAlive", wm => wm.alive = false)
                 .Cost(wm => 1f + (1f / Mathf.Max(1f, wm.meleeKickDamage)))
                 .LinkedState(_meleeKickAttack),
