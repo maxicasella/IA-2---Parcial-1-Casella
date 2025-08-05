@@ -139,9 +139,9 @@ public class EnemyPickArrows : MonoBaseState
 
                 if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
                 {
-                    PickArrows();
                     _isGoalNode = true;
                     _myAnim.SetBool("Walk", false);
+                    PickArrows();
                     yield break;
                 }
                 yield return null;
@@ -149,9 +149,9 @@ public class EnemyPickArrows : MonoBaseState
             transform.position = targetPosition;
             if (node == end)
             {
-                PickArrows();
                 _isGoalNode = true;
                 _myAnim.SetBool("Walk", false);
+                PickArrows();
                 yield break;
             }
             yield return new WaitForSeconds(0.1f);
@@ -180,8 +180,9 @@ public class EnemyPickArrows : MonoBaseState
 
     IEnumerator ExecuteCollect()
     {
-        _myAnim.SetBool("Walk", false);
-        //_particles.Play();
+        if (_particles.isPlaying)
+            _particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        _particles.Play();
         _rangeAttackState.PickArrows();
         Debug.Log("Pick Arrows finished.");
         yield return new WaitForSeconds(1f);

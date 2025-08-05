@@ -143,9 +143,9 @@ public class EnemyRecoveryLife : MonoBaseState
 
                 if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
                 {
-                    StartCoroutine(ExecuteRecovery());
                     _isGoalNode = true;
                     _myAnim.SetBool("Walk", false);
+                    StartCoroutine(ExecuteRecovery());
                     yield break;
                 }
                 yield return null;
@@ -153,9 +153,9 @@ public class EnemyRecoveryLife : MonoBaseState
             transform.position = targetPosition;
             if (node == end)
             {
-                StartCoroutine(ExecuteRecovery());
                 _isGoalNode = true;
                 _myAnim.SetBool("Walk", false);
+                StartCoroutine(ExecuteRecovery());
                 yield break;
             }
             yield return new WaitForSeconds(0.1f);
@@ -165,8 +165,10 @@ public class EnemyRecoveryLife : MonoBaseState
     }
     IEnumerator ExecuteRecovery()
     {
-        _myAnim.SetBool("Walk", false);
-        //_recoveryParticles.Play();
+        if (_recoveryParticles.isPlaying)
+            _recoveryParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        _recoveryParticles.Play();
         _myEnemy.RecoveryLife(_recoveryValue);
         Debug.Log("Finish Recovery.");
         yield return new WaitForSeconds(1f);

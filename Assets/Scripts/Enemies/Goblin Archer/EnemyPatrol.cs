@@ -34,7 +34,6 @@ public class EnemyPatrol : MonoBaseState //IA2-P3
         _isPatrol = true;
         _calculatePath = false;
         _toAttack = false;
-        //_myAnim.SetBool("Walk", true);
         _astar = new AStar<Node>();
         _astar.OnPathCompleted += PathCompleted;
         _astar.OnCantCalculate += PathCantCompleted;

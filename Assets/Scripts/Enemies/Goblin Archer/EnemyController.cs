@@ -128,9 +128,6 @@ public class EnemyController : MonoBehaviour //IA2-P3
         _distanceToArrows = _pickArrows != null && _pickArrows.arrowsPosition != null
                                   ? Vector3.Distance(transform.position, _pickArrows.arrowsPosition.position)
                                   : float.MaxValue;
-        //_distanceToKnife = _pickKnife != null && _pickKnife.knifePosition != null
-        //                        ? Vector3.Distance(transform.position, _pickKnife.knifePosition.position)
-        //                        : float.MaxValue;
 
         var currentWorldModel = new WorldModel
         {
@@ -161,9 +158,6 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .Effect("isPlayerInRange", wm =>
                 { wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.rangeAttackDistance - 0.1f);
                 })
-                //.Effect("isPlayerNear", wm =>
-                //{ wm.distanceToPlayer = Mathf.Min(wm.distanceToPlayer, wm.meleeAttackDistance - 0.1f);
-                //})
                 .Cost(_ => 1f)
                 .LinkedState(_patrol),
 
