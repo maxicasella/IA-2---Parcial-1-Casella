@@ -12,6 +12,7 @@ public class EnemyRecoveryLife : MonoBaseState
     [SerializeField] Node end;
     Node _safeEndNode;
     [SerializeField] SpatialGrid _spatialGrid;
+    [SerializeField] Transform _recoveryPoint;
 
     [Header("Components")]
     [SerializeField] SquareQuery _myQuery;
@@ -30,6 +31,7 @@ public class EnemyRecoveryLife : MonoBaseState
     bool _calculatePath = false;
     bool _isGoalNode = false;
     bool _isRecovery = false;
+    bool _recovery = false;
 
     public override void Enter(IState from, Dictionary<string, object> transitionParameters = null)
     {
@@ -39,6 +41,11 @@ public class EnemyRecoveryLife : MonoBaseState
         _safeEndNode = FindSafeNode();
 
         if (_safeEndNode != null) end = _safeEndNode;
+        if (_safeEndNode != null && Vector3.Distance(transform.position, _safeEndNode.transform.position) <= 0.2f)
+        {
+            StartCoroutine(ExecuteRecovery());
+            return;
+        }
 
         _astar.OnPathCompleted += PathCompleted;
         _astar.OnCantCalculate += PathCantCompleted;
@@ -47,6 +54,12 @@ public class EnemyRecoveryLife : MonoBaseState
     public override void UpdateLoop()
     {
         GoToSafePosition();
+        if (_recovery)
+        {
+            FinishState();
+            Debug.Log("Exit Update Loop Recovery Life.");
+            return;
+        }
     }
     public override Dictionary<string, object> Exit(IState to)
     {
@@ -62,19 +75,12 @@ public class EnemyRecoveryLife : MonoBaseState
 
     Node FindSafeNode()
     {
-        var allNodes = FindObjectsOfType<Node>();
-        Vector3 pos = transform.position;
+        Vector3 recoveryPos = _recoveryPoint.position;
 
-        var nodes = allNodes
+        return FindObjectsOfType<Node>()
             .Where(n => n.neighbours != null && n.neighbours.Length > 0)
-            .Where(n => Vector3.Distance(pos, n.transform.position) >= _minRecoveryDistance)
-            .OrderByDescending(n => Vector3.Distance(pos, n.transform.position)) 
-            .ToList();
-
-        if (allNodes.Any()) return nodes.First(); 
-
-        Debug.Log("No se encontro un nodo seguro lejano.");
-        return null;
+            .OrderBy(n => Vector3.Distance(n.transform.position, recoveryPos))
+            .FirstOrDefault();
     }
     void PathCompleted(IEnumerable<Node> newPath)
     {
@@ -137,9 +143,9 @@ public class EnemyRecoveryLife : MonoBaseState
 
                 if (node == end && Vector3.Distance(transform.position, targetPosition) <= 0.1f)
                 {
-                    _myAnim.SetBool("Walk", false);
                     StartCoroutine(ExecuteRecovery());
                     _isGoalNode = true;
+                    _myAnim.SetBool("Walk", false);
                     yield break;
                 }
                 yield return null;
@@ -147,9 +153,9 @@ public class EnemyRecoveryLife : MonoBaseState
             transform.position = targetPosition;
             if (node == end)
             {
-                _myAnim.SetBool("Walk", false);
                 StartCoroutine(ExecuteRecovery());
                 _isGoalNode = true;
+                _myAnim.SetBool("Walk", false);
                 yield break;
             }
             yield return new WaitForSeconds(0.1f);
@@ -160,13 +166,11 @@ public class EnemyRecoveryLife : MonoBaseState
     IEnumerator ExecuteRecovery()
     {
         _myAnim.SetBool("Walk", false);
-        _recoveryParticles.Play();
+        //_recoveryParticles.Play();
         _myEnemy.RecoveryLife(_recoveryValue);
-
-        yield return new WaitForSeconds(1f); 
-
-        _isGoalNode = true;
-        FinishState();
+        Debug.Log("Finish Recovery.");
+        yield return new WaitForSeconds(1f);
+        _recovery = true;
     }
 
     void OnDrawGizmos()

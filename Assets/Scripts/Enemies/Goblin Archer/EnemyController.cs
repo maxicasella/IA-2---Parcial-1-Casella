@@ -128,9 +128,9 @@ public class EnemyController : MonoBehaviour //IA2-P3
         _distanceToArrows = _pickArrows != null && _pickArrows.arrowsPosition != null
                                   ? Vector3.Distance(transform.position, _pickArrows.arrowsPosition.position)
                                   : float.MaxValue;
-        _distanceToKnife = _pickKnife != null && _pickKnife.knifePosition != null
-                                ? Vector3.Distance(transform.position, _pickKnife.knifePosition.position)
-                                : float.MaxValue;
+        //_distanceToKnife = _pickKnife != null && _pickKnife.knifePosition != null
+        //                        ? Vector3.Distance(transform.position, _pickKnife.knifePosition.position)
+        //                        : float.MaxValue;
 
         var currentWorldModel = new WorldModel
         {
@@ -195,12 +195,6 @@ public class EnemyController : MonoBehaviour //IA2-P3
                 .Effect("hasArrows", wm => wm.arrows = wm.maxArrows)
                 .Cost(wm => 1f + wm.distanceToArrows)
                 .LinkedState(_pickArrows),
-
-            //new GOAPAction("Pick Knife")
-            //    .Pre("noKnife", wm => wm.weapon != "Knife")
-            //    .Effect("hasKnife", wm => wm.weapon = "Knife")
-            //    .Cost(wm => 1f + wm.distanceToKnife)
-            //    .LinkedState(_pickKnife),
 
             new GOAPAction("Recovery Life")
                 .Pre("lowHP", wm => wm.life <= (0.25f * wm.maxLife))
